@@ -1,0 +1,27 @@
+<x-app-layout>
+    <h1 class="text-2xl font-bold mb-4">Add Frequency</h1>
+
+    <form method="POST" action="{{ route('sigint.frequency.store') }}" class="space-y-4">
+        @csrf
+
+        <input type="number" step="0.0001" name="frequency" placeholder="Frequency (MHz)" class="w-full p-2 border rounded">
+        <input name="modulation" placeholder="Modulation (AM, FM, SSB)" class="w-full p-2 border rounded">
+        <input type="number" name="bandwidth" placeholder="Bandwidth (kHz)" class="w-full p-2 border rounded">
+        <input name="power" placeholder="Power (W or dBm)" class="w-full p-2 border rounded">
+        <input type="datetime-local" name="last_heard" class="w-full p-2 border rounded">
+        <input name="coordinates" placeholder="Coordinates (LatLon or MGRS)" class="w-full p-2 border rounded">
+        <input name="unit" placeholder="Unit (Friendly, Enemy, Unknown)" class="w-full p-2 border rounded">
+
+        <select name="priority" class="w-full p-2 border rounded">
+            <option>Low</option>
+            <option selected>Normal</option>
+            <option>High</option>
+        </select>
+
+        <textarea name="notes" placeholder="Notes..." class="w-full p-2 border rounded"></textarea>
+
+        <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+            Save
+        </button>
+    </form>
+</x-app-layout>

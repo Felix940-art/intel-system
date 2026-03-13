@@ -1,0 +1,46 @@
+<x-app-layout>
+    <h1 class="text-3xl font-bold mb-4">📡 Frequency Database</h1>
+
+    <a href="{{ route('sigint.frequency.create') }}" 
+       class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        + Add Frequency
+    </a>
+
+    <table class="w-full mt-6 border">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="p-2">Frequency (MHz)</th>
+                <th class="p-2">Modulation</th>
+                <th class="p-2">Bandwidth</th>
+                <th class="p-2">Power</th>
+                <th class="p-2">Last Heard</th>
+                <th class="p-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($frequencies as $f)
+            <tr class="border-b">
+                <td class="p-2">{{ $f->frequency }}</td>
+                <td class="p-2">{{ $f->modulation }}</td>
+                <td class="p-2">{{ $f->bandwidth }} kHz</td>
+                <td class="p-2">{{ $f->power }}</td>
+                <td class="p-2">{{ $f->last_heard }}</td>
+                <td class="p-2 flex space-x-2">
+                    <a href="{{ route('sigint.frequency.edit', $f->id) }}" 
+                       class="text-blue-600">Edit</a>
+
+                    <form action="{{ route('sigint.frequency.destroy', $f->id) }}" 
+                          method="POST">
+                        @csrf @method('DELETE')
+
+                        <button class="text-red-600"
+                            onclick="return confirm('Delete this entry?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    {{ $frequencies->links() }}
+</x-app-layout>
