@@ -14,35 +14,58 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
 
             <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
-                <h3 class="text-xs uppercase tracking-wider text-slate-400">
-                    Total Records
-                </h3>
-                <p class="text-3xl font-bold text-white mt-2">128</p>
-                <span class="text-xs text-slate-500">All modules</span>
+                <p class="text-3xl font-bold text-white mt-2">{{ $sigint ?? 0 }}</p>
+                <span class="text-xs text-slate-500">SIGINT</span>
             </div>
 
             <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
-                <h3 class="text-xs uppercase tracking-wider text-slate-400">
-                    Active SIGINT
-                </h3>
-                <p class="text-3xl font-bold text-white mt-2">42</p>
-                <span class="text-xs text-slate-500">Current frequencies</span>
+                <p class="text-3xl font-bold text-white mt-2">{{ $geoint ?? 0 }}</p>
+                <span class="text-xs text-slate-500">GEOINT</span>
             </div>
 
             <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
-                <h3 class="text-xs uppercase tracking-wider text-slate-400">
-                    Pending Reviews
-                </h3>
-                <p class="text-3xl font-bold text-white mt-2">7</p>
-                <span class="text-xs text-slate-500">Awaiting validation</span>
+                <p class="text-3xl font-bold text-red-400 mt-2">{{ $dforensics ?? 0 }}</p>
+                <span class="text-xs text-slate-500">D-FORENSICS</span>
             </div>
 
             <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
-                <h3 class="text-xs uppercase tracking-wider text-slate-400">
-                    Alerts
-                </h3>
-                <p class="text-3xl font-bold text-red-400 mt-2">3</p>
-                <span class="text-xs text-slate-500">Immediate attention</span>
+                <p class="text-3xl font-bold text-white mt-2">{{ $totalRecords ?? 0 }}</p>
+                <span class="text-xs text-slate-500">Total</span>
+            </div>
+        </div>
+
+        <!-- 📈 TREND GRAPH -->
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+            <h2 class="text-white font-semibold mb-4">Activity Trend</h2>
+            <canvas id="trendChart"></canvas>
+        </div>
+
+        <!-- 🗺 MAP + FORENSICS -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+            <!-- TACTICAL MAP -->
+            <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+                <h2 class="text-white font-semibold mb-4">Tactical Map</h2>
+                <div id="map" class="h-96 rounded-lg"></div>
+            </div>
+
+            <!-- D-FORENSICS PREVIEW -->
+            <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+                <h2 class="text-white font-semibold mb-4">D-FORENSICS Analysis</h2>
+
+                @forelse($forensics ?? [] as $item)
+                <div class="border-b border-slate-800 py-3">
+                    <p class="text-white font-medium">
+                        {{ $item->filename ?? 'File' }}
+                    </p>
+                    <span class="text-xs text-slate-400">
+                        {{ $item->created_at ?? '' }}
+                    </span>
+                </div>
+                @empty
+                <p class="text-slate-400 text-sm">No forensic data available</p>
+                @endforelse
+
             </div>
 
         </div>
@@ -57,7 +80,7 @@
                 </div>
                 <div class="p-5 overflow-x-auto">
                     <table class="min-w-full text-sm border-collapse">
-                        <thead class="bg-slate-800 text-slate-400 uppercase text-xs tracking-wider">
+                        <thead class="bg-slate-800 text-slate-400 uppercase text-xs">
                             <tr>
                                 <th class="px-4 py-3 text-left">Time</th>
                                 <th class="px-4 py-3 text-left">Module</th>
@@ -66,18 +89,22 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800 text-slate-200">
-                            <tr class="hover:bg-slate-800 transition">
-                                <td class="px-4 py-3">08:41</td>
-                                <td class="px-4 py-3 font-medium">SIGINT</td>
-                                <td class="px-4 py-3">New frequency logged</td>
-                                <td class="px-4 py-3">F. Malgath</td>
+
+                            @forelse($recentActivities ?? [] as $activity)
+                            <tr>
+                                <td class="px-4 py-3">{{ $activity->time ?? '-' }}</td>
+                                <td class="px-4 py-3">{{ $activity->module ?? '-' }}</td>
+                                <td class="px-4 py-3">{{ $activity->action ?? '-' }}</td>
+                                <td class="px-4 py-3">{{ $activity->user ?? '-' }}</td>
                             </tr>
-                            <tr class="hover:bg-slate-800 transition">
-                                <td class="px-4 py-3">07:15</td>
-                                <td class="px-4 py-3 font-medium">D-FORENSICS</td>
-                                <td class="px-4 py-3">File uploaded</td>
-                                <td class="px-4 py-3">Admin</td>
+                            @empty
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-slate-500">
+                                    No activity data
+                                </td>
                             </tr>
+                            @endforelse
+
                         </tbody>
                     </table>
                 </div>
@@ -102,45 +129,50 @@
 
         </div>
 
-        <!-- MODULE OVERVIEW -->
-        <div class="bg-slate-900 border border-slate-800 rounded-lg">
-            <div class="p-5 border-b border-slate-800">
-                <h2 class="font-semibold text-white">Module Overview</h2>
-            </div>
-            <div class="p-5 overflow-x-auto">
-                <table class="min-w-full text-sm border-collapse">
-                    <thead class="bg-slate-800 text-slate-400 uppercase text-xs tracking-wider">
-                        <tr>
-                            <th class="px-4 py-3 text-left">Module</th>
-                            <th class="px-4 py-3 text-left">Records</th>
-                            <th class="px-4 py-3 text-left">Last Update</th>
-                            <th class="px-4 py-3 text-left">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-800 text-slate-200">
-                        <tr class="hover:bg-slate-800 transition">
-                            <td class="px-4 py-3 font-medium">SIGINT</td>
-                            <td class="px-4 py-3">42</td>
-                            <td class="px-4 py-3">Today</td>
-                            <td class="px-4 py-3 text-green-400 font-semibold">Active</td>
-                        </tr>
-                        <tr class="hover:bg-slate-800 transition">
-                            <td class="px-4 py-3 font-medium">GEOINT</td>
-                            <td class="px-4 py-3">18</td>
-                            <td class="px-4 py-3">Yesterday</td>
-                            <td class="px-4 py-3 text-yellow-400 font-semibold">Pending</td>
-                        </tr>
-                        <tr class="hover:bg-slate-800 transition">
-                            <td class="px-4 py-3 font-medium">D-FORENSICS</td>
-                            <td class="px-4 py-3">11</td>
-                            <td class="px-4 py-3">2 days ago</td>
-                            <td class="px-4 py-3 text-blue-400 font-semibold">Stable</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
     </div>
+
+    <!-- SCRIPTS -->
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const trendData = @json($trend ?? []);
+        const labels = trendData.map(t => t.date);
+        const values = trendData.map(t => t.count);
+
+        new Chart(document.getElementById('trendChart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Activity Trend',
+                    data: values,
+                    borderColor: '#3b82f6',
+                    tension: 0.4
+                }]
+            }
+        });
+    </script>
+
+    <!-- Leaflet Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        const map = L.map('map').setView([10.0, 122.0], 5);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        const points = @json($mapData ?? []);
+
+        points.forEach(p => {
+            if (p.latitude && p.longitude) {
+                L.marker([p.latitude, p.longitude])
+                    .addTo(map)
+                    .bindPopup("Frequency: " + (p.frequency ?? 'N/A'));
+            }
+        });
+    </script>
 
 </x-app-layout>

@@ -68,67 +68,66 @@
 <x-app-layout>
 
     {{-- HEADER --}}
-    <div class="max-w-7xl mx-auto mb-4">
 
-        <div class="flex flex-wrap items-center justify-between gap-4">
+    <div class="flex flex-wrap items-center justify-between gap-4">
 
-            {{-- LEFT --}}
-            <div>
-                <h1 class="text-2xl font-bold text-slate-100 flex items-center gap-3">
-                    🛰️ SRE System
-                </h1>
-                <p class="text-sm text-slate-400 mt-1">
-                    GSM Networks Monitoring Database
-                </p>
+        {{-- LEFT --}}
+        <div>
+            <h1 class="text-2xl font-bold text-slate-100 flex items-center gap-3">
+                🛰️ SRE System
+            </h1>
+            <p class="text-sm text-slate-400 mt-1">
+                GSM Networks Monitoring Database
+            </p>
 
-                <div class="flex items-center gap-1 mt-1 text-xs text-slate-400">
-                    <span class="relative px-3 py-1 rounded-md bg-slate-800 border border-slate-700 text-xs">
-                        <span class="absolute -left-1 -top-1 h-2 w-2 bg-emerald-400 rounded-full animate-ping"></span>
-                        <span class="absolute -left-1 -top-1 h-2 w-2 bg-emerald-400 rounded-full"></span>
-                        Live Operational Feed
-                    </span>
+            <div class="flex items-center gap-1 mt-1 text-xs text-slate-400">
+                <span class="relative px-3 py-1 rounded-md bg-slate-800 border border-slate-700 text-xs">
+                    <span class="absolute -left-1 -top-1 h-2 w-2 bg-emerald-400 rounded-full animate-ping"></span>
+                    <span class="absolute -left-1 -top-1 h-2 w-2 bg-emerald-400 rounded-full"></span>
+                    Live Operational Feed
+                </span>
 
-                    <span>
-                        {{ now()->format('d M Y • H:i') }}
-                    </span>
-                </div>
+                <span>
+                    {{ now()->format('d M Y • H:i') }}
+                </span>
             </div>
+        </div>
 
 
-            {{-- RIGHT ACTIONS --}}
-            <div class="flex flex-wrap items-center gap-3">
+        {{-- RIGHT ACTIONS --}}
+        <div class="flex flex-wrap items-center gap-3">
 
-                {{-- IMPORT --}}
-                <form id="sreImportForm"
-                    action="{{ route('sigint.sre.import') }}"
-                    method="POST"
-                    enctype="multipart/form-data"
-                    class="flex items-center gap-2">
-                    @csrf
+            {{-- IMPORT --}}
+            <form id="sreImportForm"
+                action="{{ route('sigint.sre.import') }}"
+                method="POST"
+                enctype="multipart/form-data"
+                class="flex items-center gap-2">
+                @csrf
 
-                    <input type="file"
-                        name="file"
-                        id="sreImportFile"
-                        class="hidden"
-                        accept=".xlsx,.xls,.csv"
-                        required>
+                <input type="file"
+                    name="file"
+                    id="sreImportFile"
+                    class="hidden"
+                    accept=".xlsx,.xls,.csv"
+                    required>
 
-                    <button type="button"
-                        onclick="document.getElementById('sreImportFile').click()"
-                        class="h-11 px-5 inline-flex items-center justify-center gap-2
+                <button type="button"
+                    onclick="document.getElementById('sreImportFile').click()"
+                    class="h-11 px-5 inline-flex items-center justify-center gap-2
                                 rounded-xl
                                 bg-slate-700 hover:bg-slate-600
                                 text-slate-200 text-sm font-medium
                                 shadow-md shadow-slate-800/40
                                 hover:shadow-slate-600/40
                                 transition-all duration-200">
-                        Choose File
-                    </button>
+                    Choose File
+                </button>
 
 
-                    <button type="submit"
-                        id="sreImportBtn"
-                        class="h-11 px-5 inline-flex items-center justify-center gap-2
+                <button type="submit"
+                    id="sreImportBtn"
+                    class="h-11 px-5 inline-flex items-center justify-center gap-2
                                 rounded-xl
                                 bg-emerald-600 hover:bg-emerald-500
                                 text-white text-sm font-medium
@@ -136,56 +135,56 @@
                                 hover:shadow-emerald-500/40
                                 transition-all duration-200">
 
-                        <span id="sreImportText">Import Excel</span>
+                    <span id="sreImportText">Import Excel</span>
 
-                        <svg id="sreImportSpinner"
-                            class="hidden animate-spin w-4 h-4"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24">
-                            <circle class="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                stroke-width="4"></circle>
-                            <path class="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8v4l3-3-3-3v4a12 12 0 00-12 12h4z">
-                            </path>
-                        </svg>
-                    </button>
+                    <svg id="sreImportSpinner"
+                        class="hidden animate-spin w-4 h-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v4l3-3-3-3v4a12 12 0 00-12 12h4z">
+                        </path>
+                    </svg>
+                </button>
 
 
-                    {{-- EXPORT --}}
-                    <a href="{{ route('sigint.sre.export') }}"
-                        class="h-11 px-5 inline-flex items-center justify-center gap-2
+                {{-- EXPORT --}}
+                <a href="{{ route('sigint.sre.export') }}"
+                    class="h-11 px-5 inline-flex items-center justify-center gap-2
                                 rounded-xl
                                 bg-green-600 hover:bg-green-500
                                 text-white text-sm font-medium
                                 shadow-lg shadow-green-600/20
                                 hover:shadow-green-500/40
                                 transition-all duration-200">
-                        Export Excel
-                    </a>
+                    Export Excel
+                </a>
 
 
-                    <a href="{{ route('sigint.sre.export.pdf') }}"
-                        class="h-11 px-5 inline-flex items-center justify-center
+                <a href="{{ route('sigint.sre.export.pdf') }}"
+                    class="h-11 px-5 inline-flex items-center justify-center
                                 rounded-xl
                                 bg-red-600 hover:bg-red-700
                                 text-white text-sm font-medium transition">
-                        Export PDF
-                    </a>
-                </form>
-            </div>
+                    Export PDF
+                </a>
+            </form>
         </div>
+    </div>
 
-        <!-- STICKY FILTER BAR -->
-        <div id="filterBarWrapper" class="sticky top-0 z-50 w-full">
+    <!-- STICKY FILTER BAR -->
+    <div id="filterBarWrapper" class="sticky top-0 z-50 w-full">
 
-            <div id="sreFilterBar"
-                class="relative
+        <div id="sreFilterBar"
+            class="relative
                bg-[#020617]/95
                backdrop-blur-2xl
                border border-slate-800/60
@@ -194,267 +193,264 @@
                shadow-xl shadow-black/60
                transition-all duration-300">
 
-                <!-- Subtle Tactical Glow Line -->
-                <div class="absolute inset-x-0 -top-px h-px
+            <!-- Subtle Tactical Glow Line -->
+            <div class="absolute inset-x-0 -top-px h-px
                     bg-gradient-to-r
                     from-transparent
                     via-blue-500/40
                     to-transparent">
-                </div>
+            </div>
 
-                <form method="GET"
-                    action="{{ route('sigint.sre.index') }}"
-                    class="flex flex-wrap items-center gap-4">
+            <form method="GET"
+                action="{{ route('sigint.sre.index') }}"
+                class="flex flex-wrap items-center gap-4">
 
-                    {{-- SEARCH --}}
-                    <input type="text"
-                        name="search"
-                        value="{{ request('search') }}"
-                        placeholder="Search selector, IMEI, IMSI, code name..."
-                        class="filter-input w-80">
+                {{-- SEARCH --}}
+                <input type="text"
+                    name="search"
+                    value="{{ request('search') }}"
+                    placeholder="Search selector, IMEI, IMSI, code name..."
+                    class="filter-input w-80">
 
-                    {{-- THREAT --}}
-                    <select name="threat"
-                        class="filter-input w-44">
-                        <option value="">All Threats</option>
-                        @foreach($threats as $t)
-                        <option value="{{ $t }}"
-                            {{ request('threat') == $t ? 'selected' : '' }}>
-                            {{ $t }}
-                        </option>
-                        @endforeach
-                    </select>
+                {{-- THREAT --}}
+                <select name="threat"
+                    class="filter-input w-44">
+                    <option value="">All Threats</option>
+                    @foreach($threats as $t)
+                    <option value="{{ $t }}"
+                        {{ request('threat') == $t ? 'selected' : '' }}>
+                        {{ $t }}
+                    </option>
+                    @endforeach
+                </select>
 
-                    {{-- DATE --}}
-                    <input type="date"
-                        name="date"
-                        value="{{ request('date') }}"
-                        class="filter-input w-44">
+                {{-- DATE --}}
+                <input type="date"
+                    name="date"
+                    value="{{ request('date') }}"
+                    class="filter-input w-44">
 
-                    {{-- RIGHT SIDE ACTIONS --}}
-                    <div class="flex items-center gap-3 ml-auto">
+                {{-- RIGHT SIDE ACTIONS --}}
+                <div class="flex items-center gap-3 ml-auto">
 
-                        {{-- Result Counter --}}
-                        <span class="px-3 py-1 text-xs rounded-full
+                    {{-- Result Counter --}}
+                    <span class="px-3 py-1 text-xs rounded-full
                              bg-indigo-500/10
                              text-indigo-300
                              border border-indigo-500/30
                              backdrop-blur-md">
-                            {{ collect($groupedEvents)->flatten()->count() }} Results
-                        </span>
+                        {{ collect($groupedEvents)->flatten()->count() }} Results
+                    </span>
 
-                        {{-- FILTER --}}
-                        <button type="submit"
-                            class="h-10 px-4 inline-flex items-center justify-center gap-2
+                    {{-- FILTER --}}
+                    <button type="submit"
+                        class="h-10 px-4 inline-flex items-center justify-center gap-2
                rounded-xl
                bg-blue-600 hover:bg-blue-500
                text-white text-sm font-semibold
                shadow-md shadow-blue-600/20
                hover:shadow-blue-500/40
                transition-all duration-200">
-                            🔎 Filter
-                        </button>
+                        🔎 Filter
+                    </button>
 
-                        {{-- CLEAR --}}
-                        <a href="{{ route('sigint.sre.index') }}"
-                            class="h-10 px-4 inline-flex items-center justify-center gap-2
+                    {{-- CLEAR --}}
+                    <a href="{{ route('sigint.sre.index') }}"
+                        class="h-10 px-4 inline-flex items-center justify-center gap-2
               rounded-xl
               bg-slate-700 hover:bg-slate-600
               text-slate-200 text-sm font-semibold
               border border-slate-600
               hover:border-slate-500
               transition-all duration-200">
-                            ✖ Clear
-                        </a>
+                        ✖ Clear
+                    </a>
 
-                        {{-- ADD ENTRY --}}
-                        <a href="{{ route('sigint.sre.create') }}"
-                            class="h-10 px-4 inline-flex items-center justify-center gap-2
+                    {{-- ADD ENTRY --}}
+                    <a href="{{ route('sigint.sre.create') }}"
+                        class="h-10 px-4 inline-flex items-center justify-center gap-2
               rounded-xl
               bg-indigo-600 hover:bg-indigo-500
               text-white text-sm font-semibold
               shadow-md shadow-indigo-600/20
               hover:shadow-indigo-500/40
               transition-all duration-200">
-                            ➕ Add Entry
-                        </a>
+                        ➕ Add Entry
+                    </a>
 
-                    </div>
-
-                </form>
-
-                {{-- ACTIVE FILTER CHIPS --}}
-                <div class="mt-3 flex flex-wrap gap-2">
-                    @if(request('search'))
-                    <span class="filter-chip">
-                        Search: "{{ request('search') }}"
-                    </span>
-                    @endif
-
-                    @if(request('threat'))
-                    <span class="filter-chip">
-                        Threat: {{ request('threat') }}
-                    </span>
-                    @endif
-
-                    @if(request('date'))
-                    <span class="filter-chip">
-                        Date: {{ request('date') }}
-                    </span>
-                    @endif
                 </div>
 
-            </div>
-        </div>
+            </form>
 
-        <div class="h-px w-full bg-gradient-to-r
+            {{-- ACTIVE FILTER CHIPS --}}
+            <div class="mt-3 flex flex-wrap gap-2">
+                @if(request('search'))
+                <span class="filter-chip">
+                    Search: "{{ request('search') }}"
+                </span>
+                @endif
+
+                @if(request('threat'))
+                <span class="filter-chip">
+                    Threat: {{ request('threat') }}
+                </span>
+                @endif
+
+                @if(request('date'))
+                <span class="filter-chip">
+                    Date: {{ request('date') }}
+                </span>
+                @endif
+            </div>
+
+        </div>
+    </div>
+
+    <div class="h-px w-full bg-gradient-to-r
             from-transparent
             via-blue-500/30
             to-transparent
             mb-4">
+    </div>
+
+    <!-- TABLE -->
+    <div class="relative bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+
+        <!-- Top gradient fade -->
+        <div class="pointer-events-none absolute top-0 left-0 right-0 h-6
+                bg-gradient-to-b from-slate-900 to-transparent z-10">
         </div>
 
-        <!-- TABLE -->
-        <div class="relative bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+        <table class="w-full text-sm border-separate border-spacing-y-1">
 
-            <!-- Top gradient fade -->
-            <div class="pointer-events-none absolute top-0 left-0 right-0 h-6
-                bg-gradient-to-b from-slate-900 to-transparent z-10">
-            </div>
+            <thead class="bg-slate-800 text-slate-400 text-xs uppercase tracking-wider">
+                <tr>
+                    <th class="px-5 py-3 text-left">Date / Time</th>
+                    <th class="px-5 py-3 text-left">Code Name</th>
+                    <th class="px-5 py-3 text-left">Selector</th>
+                    <th class="px-5 py-3 text-left">IMEI</th>
+                    <th class="px-5 py-3 text-left">IMSI</th>
+                    <th class="px-5 py-3 text-left">LAC</th>
+                    <th class="px-5 py-3 text-left">CID</th>
+                    <th class="px-5 py-3 text-left">Threat</th>
+                    <th class="px-5 py-3 text-right">Action</th>
+                </tr>
+            </thead>
 
-            <table class="w-full text-sm border-separate border-spacing-y-1">
+            <tbody>
+                @forelse($groupedEvents as $group => $items)
 
-                <thead class="bg-slate-800 text-slate-400 text-xs uppercase tracking-wider">
-                    <tr>
-                        <th class="px-5 py-3 text-left">Date / Time</th>
-                        <th class="px-5 py-3 text-left">Code Name</th>
-                        <th class="px-5 py-3 text-left">Selector</th>
-                        <th class="px-5 py-3 text-left">IMEI</th>
-                        <th class="px-5 py-3 text-left">IMSI</th>
-                        <th class="px-5 py-3 text-left">LAC</th>
-                        <th class="px-5 py-3 text-left">CID</th>
-                        <th class="px-5 py-3 text-left">Threat</th>
-                        <th class="px-5 py-3 text-right">Action</th>
-                    </tr>
-                </thead>
+                @foreach($items as $e)
 
-                <tbody>
-                    @forelse($groupedEvents as $group => $items)
+                @php
+                $threatColors = [
+                'SRC' => 'bg-blue-500/10 text-blue-300 border-blue-500/30',
+                'SRGU' => 'bg-red-500/10 text-red-300 border-red-500/30',
+                'SRMA' => 'bg-orange-500/10 text-orange-300 border-orange-500/30',
+                'SROC' => 'bg-green-500/10 text-green-300 border-green-500/30',
+                'SRMA EMPORIUM' => 'bg-yellow-500/10 text-yellow-300 border-yellow-500/30',
+                'SRMA ARCTIC' => 'bg-teal-500/10 text-teal-300 border-teal-500/30',
+                'SRMA BROWSER' => 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30',
+                'SRMA SESAME' => 'bg-purple-500/10 text-purple-300border-purple-500/30',
+                'SRMA LEVOX' => 'bg-pink-500/10 text-pink-300 border-pink-500/30',
+                'COMTECH' => 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30',
+                'EV MRGU' => 'bg-red-500/10 text-red-300 border-red-500/30',
+                'FUNCTIONAL' => 'bg-purple-500/10 text-purple-300 border-purple-500/30',
+                'UNKNOWN' => 'bg-slate-600/20 text-slate-300 border-slate-500/30',
+                ];
 
-                    @foreach($items as $e)
+                $threatStyle = $threatColors[$e->threat_group]
+                ?? 'bg-slate-600/20 text-slate-300 border-slate-500/30';
+                @endphp
 
-                    @php
-                    $threatColors = [
-                    'SRC' => 'bg-blue-500/10 text-blue-300 border-blue-500/30',
-                    'SRGU' => 'bg-red-500/10 text-red-300 border-red-500/30',
-                    'SRMA' => 'bg-orange-500/10 text-orange-300 border-orange-500/30',
-                    'SROC' => 'bg-green-500/10 text-green-300 border-green-500/30',
-                    'SRMA EMPORIUM' => 'bg-yellow-500/10 text-yellow-300 border-yellow-500/30',
-                    'SRMA ARCTIC' => 'bg-teal-500/10 text-teal-300 border-teal-500/30',
-                    'SRMA BROWSER' => 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30',
-                    'SRMA SESAME' => 'bg-purple-500/10 text-purple-300border-purple-500/30',
-                    'SRMA LEVOX' => 'bg-pink-500/10 text-pink-300 border-pink-500/30',
-                    'COMTECH' => 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30',
-                    'EV MRGU' => 'bg-red-500/10 text-red-300 border-red-500/30',
-                    'FUNCTIONAL' => 'bg-purple-500/10 text-purple-300 border-purple-500/30',
-                    'UNKNOWN' => 'bg-slate-600/20 text-slate-300 border-slate-500/30',
-                    ];
-
-                    $threatStyle = $threatColors[$e->threat_group]
-                    ?? 'bg-slate-600/20 text-slate-300 border-slate-500/30';
-                    @endphp
-
-                    <tr class="animate-rowFade
+                <tr class="animate-rowFade
                                 bg-slate-900/60 hover:bg-slate-800/60
                                 transition duration-300
                                 hover:scale-[1.01]
                                 hover:shadow-lg
                                 {{ $e->description === 'UNKNOWN' ? '' : 'hover:shadow-red-500/20' }}">
 
-                        <td class="px-5 py-4 text-slate-300">
-                            {{ optional($e->created_at)->format('d M Y H:i') ?? '—' }}
-                        </td>
+                    <td class="px-5 py-4 text-slate-300">
+                        {{ optional($e->created_at)->format('d M Y H:i') ?? '—' }}
+                    </td>
 
-                        <td class="px-5 py-4 text-center">
-                            @if($e->selector->code_name)
-                            <span class="px-3 py-1 text-xs rounded-full
+                    <td class="px-5 py-4 text-center">
+                        @if($e->selector->code_name)
+                        <span class="px-3 py-1 text-xs rounded-full
                                 bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
-                                {{ $e->selector->code_name ?? '—' }}
-                            </span>
-                            @else
-                            —
-                            @endif
-                        </td>
+                            {{ $e->selector->code_name ?? '—' }}
+                        </span>
+                        @else
+                        —
+                        @endif
+                    </td>
 
-                        <td class="px-5 py-4 text-slate-300 font-medium">
-                            {{ $e->selector->selector_value ?? '—' }}
-                        </td>
+                    <td class="px-5 py-4 text-slate-300 font-medium">
+                        {{ $e->selector->selector_value ?? '—' }}
+                    </td>
 
-                        <td class="px-5 py-4 text-slate-300">{{ $e->imei ?? '—' }}</td>
-                        <td class="px-5 py-4 text-slate-300">{{ $e->imsi ?? '—' }}</td>
-                        <td class="px-5 py-4 text-slate-300">{{ $e->lac ?? '—' }}</td>
-                        <td class="px-5 py-4 text-slate-300">{{ $e->cid ?? '—' }}</td>
+                    <td class="px-5 py-4 text-slate-300">{{ $e->imei ?? '—' }}</td>
+                    <td class="px-5 py-4 text-slate-300">{{ $e->imsi ?? '—' }}</td>
+                    <td class="px-5 py-4 text-slate-300">{{ $e->lac ?? '—' }}</td>
+                    <td class="px-5 py-4 text-slate-300">{{ $e->cid ?? '—' }}</td>
 
-                        <td class="px-5 py-4 text-center">
-                            @if($e->selector && $e->selector->threat_group)
-                            <span class="px-3 py-1 text-xs rounded-full border {{ $threatStyle }}">
-                                {{ $e->selector->threat_group }}
-                            </span>
-                            @else
-                            —
-                            @endif
-                        </td>
+                    <td class="px-5 py-4 text-center">
+                        @if($e->selector && $e->selector->threat_group)
+                        <span class="px-3 py-1 text-xs rounded-full border {{ $threatStyle }}">
+                            {{ $e->selector->threat_group }}
+                        </span>
+                        @else
+                        —
+                        @endif
+                    </td>
 
-                        <td class="px-5 py-4 text-right">
-                            <div class="flex justify-end gap-4">
-                                <a href="{{ route('sigint.sre.edit', $e->id) }}"
-                                    class="text-blue-400 hover:text-blue-300 transition">
-                                    Edit
-                                </a>
+                    <td class="px-5 py-4 text-right">
+                        <div class="flex justify-end gap-4">
+                            <a href="{{ route('sigint.sre.edit', $e->id) }}"
+                                class="text-blue-400 hover:text-blue-300 transition">
+                                Edit
+                            </a>
 
-                                <button
-                                    onclick="openDeleteModal({{ $e->id }})"
-                                    class="text-red-400 hover:text-red-300 transition">
-                                    Delete
-                                </button>
-                            </div>
-                        </td>
+                            <button
+                                onclick="openDeleteModal({{ $e->id }})"
+                                class="text-red-400 hover:text-red-300 transition">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
 
-                    </tr>
+                </tr>
 
-                    @endforeach
+                @endforeach
 
-                    @empty
+                @empty
 
-                    <tr>
-                        <td colspan="9" class="p-12 text-center">
+                <tr>
+                    <td colspan="9" class="p-12 text-center">
 
-                            <div class="flex flex-col items-center gap-3">
+                        <div class="flex flex-col items-center gap-3">
 
-                                <div class="text-4xl opacity-30">🛰️</div>
+                            <div class="text-4xl opacity-30">🛰️</div>
 
-                                <p class="text-slate-400 text-sm">
-                                    No SRE events found.
-                                </p>
+                            <p class="text-slate-400 text-sm">
+                                No SRE events found.
+                            </p>
 
-                                <a href="{{ route('sigint.sre.create') }}"
-                                    class="mt-2 px-4 py-2 rounded-lg
+                            <a href="{{ route('sigint.sre.create') }}"
+                                class="mt-2 px-4 py-2 rounded-lg
                                       bg-blue-600 hover:bg-blue-500
                                       text-white text-sm transition">
-                                    Add First Entry
-                                </a>
+                                Add First Entry
+                            </a>
 
-                            </div>
+                        </div>
 
-                        </td>
-                    </tr>
+                    </td>
+                </tr>
 
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-
+                @endforelse
+            </tbody>
+        </table>
     </div>
 </x-app-layout>
 

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FrequencyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SreDashboardController;

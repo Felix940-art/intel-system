@@ -80,11 +80,13 @@ class FrequencyController extends Controller
         $frequencies = $query->latest()->paginate(10)->withQueryString();
 
         $distinctMonths = (clone $query)
+            ->reorder() // reset order for groupBy
             ->selectRaw("SUBSTRING_INDEX(SUBSTRING_INDEX(datetime_code,' ',3),' ',-1) AS m")
             ->groupBy('m')
             ->pluck('m');
 
         $distinctYears = (clone $query)
+            ->reorder() // reset order for groupBy
             ->selectRaw("SUBSTRING_INDEX(datetime_code,' ',-1) AS y")
             ->groupBy('y')
             ->pluck('y');

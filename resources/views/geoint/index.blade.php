@@ -1,254 +1,248 @@
 <x-app-layout>
 
-    <div class="max-w-7xl mx-auto space-y-6">
+    {{-- ========================================= --}}
+    {{-- HEADER --}}
+    {{-- ========================================= --}}
+    <div class="flex justify-between items-center mb-6">
 
-        {{-- ========================================= --}}
-        {{-- HEADER --}}
-        {{-- ========================================= --}}
-        <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-white">
+                🛰 ISTAR Report
+            </h1>
 
-            <div>
-                <h1 class="text-2xl font-bold text-white">
-                    🛰 ISTAR Report
-                </h1>
-
-                <p class="text-xs text-slate-400 tracking-wider">
-                    Intelligence Surveillance Target Acquisition & Reconnaissance
-                </p>
-
-            </div>
-
-            <div class="flex gap-3">
-                <a href="{{ route('geoint.create') }}"
-                    class="btn-accent">
-                    + Add Record
-                </a>
-
-                <a href="{{ route('geoint.uav-intel') }}"
-                    class="btn-secondary">
-                    UAV Intelligence
-                </a>
-            </div>
+            <p class="text-xs text-slate-400 tracking-wider">
+                Intelligence Surveillance Target Acquisition & Reconnaissance
+            </p>
 
         </div>
 
-        <div class="command-bar">
-            <span class="live-indicator">
-                <span class="live-dot"></span>
-                LIVE
-            </span>
+        <div class="flex gap-3">
+            <a href="{{ route('geoint.create') }}"
+                class="btn-accent">
+                + Add Record
+            </a>
 
-            <span class="command-divider"></span>
-
-            <span>{{ now()->format('d M Y') }}</span>
-
-            <span class="command-divider"></span>
-
-            <span>SECTOR: CENTRAL COMMAND</span>
-
-            <span class="command-divider"></span>
-
-            <span>MISSIONS: <strong>{{ $totalMissions }}</strong></span>
-
-            <span class="command-divider"></span>
-
-            <span>TODAY: <strong>{{ $todayMissions }}</strong></span>
-
-            <span class="command-divider"></span>
-
-            <span>WEEK: <strong>{{ $weekMissions }}</strong></span>
-
-        </div>
-
-        <div class="border-t border-slate-800 my-6"></div>
-
-        {{-- ========================================= --}}
-        {{-- FILTER BAR --}}
-        {{-- ========================================= --}}
-        <div class="sticky top-0 z-40">
-
-            <div class="intel-filter-bar">
-
-                <form method="GET"
-                    action="{{ route('geoint.index') }}"
-                    class="flex flex-wrap items-center gap-4">
-
-                    <input type="text"
-                        name="search"
-                        value="{{ request('search') }}"
-                        placeholder="Search location, coordinates..."
-                        class="filter-input w-80">
-
-                    <input type="date"
-                        name="date"
-                        value="{{ request('date') }}"
-                        class="filter-input w-44">
-
-                    <div class="ml-auto flex items-center gap-3">
-
-                        <span class="result-badge">
-                            {{ $geointRecords->count() }} Results
-                        </span>
-
-                        <button type="submit" class="btn-primary">
-                            Filter
-                        </button>
-
-                        <a href="{{ route('geoint.index') }}"
-                            class="btn-secondary">
-                            Clear
-                        </a>
-
-                    </div>
-
-                </form>
-
-            </div>
-        </div>
-
-
-        {{-- ========================================= --}}
-        {{-- TABLE --}}
-        {{-- ========================================= --}}
-        <div class="intel-table-wrapper">
-
-            <table class="intel-table">
-
-                <thead class="bg-slate-900 border border-slate-800 text-xs uppercase tracking-widest text-slate-400">
-                    <tr>
-                        <th class="px-5 py-3 text-left">Date / Time</th>
-                        <th class="px-5 py-3 text-left">Document</th>
-                        <th class="px-5 py-3 text-left">UAV</th>
-                        <th class="px-5 py-3 text-left">Home Point (MGRS)</th>
-                        <th class="px-5 py-3 text-left">Threat</th>
-                        <th class="px-5 py-3 text-right">Action</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    @forelse($geointRecords as $record)
-
-                    @php
-                    $threatColors = [
-                    'LOW' => 'bg-green-900 text-green-400 border-green-500',
-                    'MEDIUM' => 'bg-yellow-900 text-yellow-400 border-yellow-500',
-                    'HIGH' => 'bg-red-900 text-red-400 border-red-500',
-                    ];
-                    @endphp
-
-                    <tr class="bg-slate-900/60 hover:bg-slate-800/60 transition duration-300 hover:scale-[1.01]">
-
-                        {{-- DATE --}}
-                        <td class="px-5 py-4 text-slate-300">
-                            {{ optional($record->mission_datetime)->format('d M Y H:i') }}
-                        </td>
-
-                        {{-- DOCUMENT --}}
-                        <td class="px-5 py-4">
-
-                            @if($record->document_path)
-
-                            <div class="flex items-center gap-3">
-
-                                {{-- Preview --}}
-                                <button onclick="openDocPreview('{{ asset('storage/'.$record->document_path) }}')"
-                                    class="text-cyan-400 hover:text-cyan-300 text-sm">
-                                    Preview
-                                </button>
-
-                                {{-- Download --}}
-                                <a href="{{ asset('storage/'.$record->document_path) }}"
-                                    download
-                                    class="text-indigo-400 hover:text-indigo-300 text-sm">
-                                    Download
-                                </a>
-
-                            </div>
-
-                            @else
-                            —
-                            @endif
-
-                        </td>
-
-                        {{-- UAV --}}
-                        <td class="px-5 py-4 text-slate-300 font-medium">
-                            {{ $record->uav ?? '—' }}
-                        </td>
-
-                        {{-- HOME POINT --}}
-                        <td class="px-5 py-4 text-slate-300">
-                            {{ $record->home_point_mgrs ?? '—' }}
-                        </td>
-
-                        {{-- THREAT --}}
-                        <td class="px-5 py-4 text-center">
-                            <span class="px-3 py-1 text-xs rounded-full border
-                                {{ $threatColors[$record->threat_confronted] ?? 'bg-slate-800 text-slate-400 border-slate-600' }}">
-                                {{ $record->threat_confronted ?? 'N/A' }}
-                            </span>
-                        </td>
-
-                        {{-- ACTION --}}
-                        <td class="px-5 py-4 text-right">
-                            <div class="flex justify-end gap-4">
-
-                                <a href="{{ route('geoint.edit', $record->id) }}"
-                                    class="text-blue-400 hover:text-blue-300">
-                                    Edit
-                                </a>
-
-                                <button onclick="openDeleteModal({{ $record->id }})"
-                                    class="text-red-400 hover:text-red-300">
-                                    Delete
-                                </button>
-
-                            </div>
-                        </td>
-
-                    </tr>
-
-                    @empty
-
-                    <tr>
-                        <td colspan="6" class="p-12 text-center text-slate-500">
-                            No GEOINT mission logs found.
-                        </td>
-                    </tr>
-
-                    @endforelse
-
-                </tbody>
-
-
-            </table>
-            <!-- DOCUMENT PREVIEW MODAL -->
-            <div id="docPreviewModal" class="fixed inset-0 z-50 hidden">
-
-                <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"
-                    onclick="closeDocPreview()"></div>
-
-                <div class="absolute inset-0 flex items-center justify-center p-6">
-
-                    <div class="bg-slate-900 border border-slate-700
-                    rounded-xl w-full max-w-4xl h-[80vh] p-4">
-
-                        <iframe id="docPreviewFrame"
-                            class="w-full h-full rounded-lg"
-                            src="">
-                        </iframe>
-
-                    </div>
-
-                </div>
-            </div>
-
-
+            <a href="{{ route('geoint.uav-intel') }}"
+                class="btn-secondary">
+                UAV Intelligence
+            </a>
         </div>
 
     </div>
 
+    <div class="command-bar">
+        <span class="live-indicator">
+            <span class="live-dot"></span>
+            LIVE
+        </span>
+
+        <span class="command-divider"></span>
+
+        <span>{{ now()->format('d M Y') }}</span>
+
+        <span class="command-divider"></span>
+
+        <span>SECTOR: CENTRAL COMMAND</span>
+
+        <span class="command-divider"></span>
+
+        <span>MISSIONS: <strong>{{ $totalMissions }}</strong></span>
+
+        <span class="command-divider"></span>
+
+        <span>TODAY: <strong>{{ $todayMissions }}</strong></span>
+
+        <span class="command-divider"></span>
+
+        <span>WEEK: <strong>{{ $weekMissions }}</strong></span>
+
+    </div>
+
+    <div class="border-t border-slate-800 my-6"></div>
+
+    {{-- ========================================= --}}
+    {{-- FILTER BAR --}}
+    {{-- ========================================= --}}
+    <div class="sticky top-0 z-40">
+
+        <div class="intel-filter-bar">
+
+            <form method="GET"
+                action="{{ route('geoint.index') }}"
+                class="flex flex-wrap items-center gap-4">
+
+                <input type="text"
+                    name="search"
+                    value="{{ request('search') }}"
+                    placeholder="Search location, coordinates..."
+                    class="filter-input w-80">
+
+                <input type="date"
+                    name="date"
+                    value="{{ request('date') }}"
+                    class="filter-input w-44">
+
+                <div class="ml-auto flex items-center gap-3">
+
+                    <span class="result-badge">
+                        {{ $geointRecords->count() }} Results
+                    </span>
+
+                    <button type="submit" class="btn-primary">
+                        Filter
+                    </button>
+
+                    <a href="{{ route('geoint.index') }}"
+                        class="btn-secondary">
+                        Clear
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    {{-- ========================================= --}}
+    {{-- TABLE --}}
+    {{-- ========================================= --}}
+    <div class="intel-table-wrapper">
+
+        <table class="intel-table">
+
+            <thead class="bg-slate-900 border border-slate-800 text-xs uppercase tracking-widest text-slate-400">
+                <tr>
+                    <th class="px-5 py-3 text-left">Date / Time</th>
+                    <th class="px-5 py-3 text-left">Document</th>
+                    <th class="px-5 py-3 text-left">UAV</th>
+                    <th class="px-5 py-3 text-left">Home Point (MGRS)</th>
+                    <th class="px-5 py-3 text-left">Threat</th>
+                    <th class="px-5 py-3 text-right">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @forelse($geointRecords as $record)
+
+                @php
+                $threatColors = [
+                'LOW' => 'bg-green-900 text-green-400 border-green-500',
+                'MEDIUM' => 'bg-yellow-900 text-yellow-400 border-yellow-500',
+                'HIGH' => 'bg-red-900 text-red-400 border-red-500',
+                ];
+                @endphp
+
+                <tr class="bg-slate-900/60 hover:bg-slate-800/60 transition duration-300 hover:scale-[1.01]">
+
+                    {{-- DATE --}}
+                    <td class="px-5 py-4 text-slate-300">
+                        {{ optional($record->mission_datetime)->format('d M Y H:i') }}
+                    </td>
+
+                    {{-- DOCUMENT --}}
+                    <td class="px-5 py-4">
+
+                        @if($record->document_path)
+
+                        <div class="flex items-center gap-3">
+
+                            {{-- Preview --}}
+                            <button onclick="openDocPreview('{{ asset('storage/'.$record->document_path) }}')"
+                                class="text-cyan-400 hover:text-cyan-300 text-sm">
+                                Preview
+                            </button>
+
+                            {{-- Download --}}
+                            <a href="{{ asset('storage/'.$record->document_path) }}"
+                                download
+                                class="text-indigo-400 hover:text-indigo-300 text-sm">
+                                Download
+                            </a>
+
+                        </div>
+
+                        @else
+                        —
+                        @endif
+
+                    </td>
+
+                    {{-- UAV --}}
+                    <td class="px-5 py-4 text-slate-300 font-medium">
+                        {{ $record->uav ?? '—' }}
+                    </td>
+
+                    {{-- HOME POINT --}}
+                    <td class="px-5 py-4 text-slate-300">
+                        {{ $record->home_point_mgrs ?? '—' }}
+                    </td>
+
+                    {{-- THREAT --}}
+                    <td class="px-5 py-4 text-center">
+                        <span class="px-3 py-1 text-xs rounded-full border
+                                {{ $threatColors[$record->threat_confronted] ?? 'bg-slate-800 text-slate-400 border-slate-600' }}">
+                            {{ $record->threat_confronted ?? 'N/A' }}
+                        </span>
+                    </td>
+
+                    {{-- ACTION --}}
+                    <td class="px-5 py-4 text-right">
+                        <div class="flex justify-end gap-4">
+
+                            <a href="{{ route('geoint.edit', $record->id) }}"
+                                class="text-blue-400 hover:text-blue-300">
+                                Edit
+                            </a>
+
+                            <button onclick="openDeleteModal({{ $record->id }})"
+                                class="text-red-400 hover:text-red-300">
+                                Delete
+                            </button>
+
+                        </div>
+                    </td>
+
+                </tr>
+
+                @empty
+
+                <tr>
+                    <td colspan="6" class="p-12 text-center text-slate-500">
+                        No GEOINT mission logs found.
+                    </td>
+                </tr>
+
+                @endforelse
+
+            </tbody>
+
+
+        </table>
+        <!-- DOCUMENT PREVIEW MODAL -->
+        <div id="docPreviewModal" class="fixed inset-0 z-50 hidden">
+
+            <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"
+                onclick="closeDocPreview()"></div>
+
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+
+                <div class="bg-slate-900 border border-slate-700
+                    rounded-xl w-full max-w-4xl h-[80vh] p-4">
+
+                    <iframe id="docPreviewFrame"
+                        class="w-full h-full rounded-lg"
+                        src="">
+                    </iframe>
+
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
 
     {{-- ========================================= --}}
     {{-- STYLES --}}
