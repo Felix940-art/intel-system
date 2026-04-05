@@ -7,102 +7,214 @@
     <title>{{ config('app.name', 'My System') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        /* ================================
+           SIDEBAR BASE
+        ================================= */
+        #sidebar {
+            width: 250px;
+            transition: width 0.3s ease;
+        }
+
+        #sidebar.sidebar-collapsed {
+            width: 80px;
+        }
+
+        /* ================================
+           SIDEBAR ITEM
+        ================================= */
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        /* ICON */
+        .icon {
+            width: 26px;
+            min-width: 26px;
+            height: 26px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+        }
+
+        /* TEXT */
+        .label {
+            transition: opacity 0.2s ease;
+        }
+
+        /* ================================
+           COLLAPSED STATE
+        ================================= */
+
+        /* HIDE TEXT CLEANLY */
+        #sidebar.sidebar-collapsed .label {
+            display: none;
+        }
+
+        /* CENTER ICONS */
+        #sidebar.sidebar-collapsed .sidebar-item {
+            justify-content: center;
+            padding-left: 10px 0;
+            gap: 0;
+        }
+
+        /* HIDE SUBMENU */
+        #sidebar.sidebar-collapsed .sidebar-sub {
+            display: none !important;
+        }
+
+        /* TOOLTIP */
+        #sidebar.sidebar-collapsed .sidebar-item:hover::after {
+            content: attr(data-label);
+            position: absolute;
+            left: 70px;
+            background: #1e293b;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+    </style>
 </head>
 
 @stack('scripts')
 
 <body class="bg-slate-950 text-slate-100">
 
-    <div class="flex min-h-screen">
+    <div class="flex min-h-screen relative">
 
         <!-- SIDEBAR -->
-        <aside class="w-64 bg-slate-900 text-slate-100 min-h-screen py-6 border-r border-slate-800 flex flex-col">
+        <aside id="sidebar"
+            class="fixed lg:relative z-50
+               bg-slate-900 text-slate-100
+               min-h-screen py-6 border-r border-slate-800 flex flex-col
+               transition-all duration-300 ease-in-out
+               w-64 -translate-x-full lg:translate-x-0">
 
-            <!-- USER -->
-            <div class="flex flex-col items-center mb-8">
+            <!-- BACKDROP -->
+            <div id="sidebarBackdrop"
+                onclick="toggleMobileSidebar()"
+                class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden">
+            </div>
+
+            <!-- HEADER -->
+            <div class="flex flex-col items-center mb-8 relative">
+
+                <button onclick="toggleSidebar()"
+                    class="absolute right-3 top-0 text-slate-400 hover:text-white text-lg">
+                    ☰
+                </button>
+
                 <div class="text-3xl mb-2">👤</div>
-                <div class="font-semibold">{{ auth()->user()->name }}</div>
-                <div class="text-xs text-slate-400 uppercase mt-1">
+
+                <div class="font-semibold text-center label">
+                    {{ auth()->user()->name }}
+                </div>
+
+                <div class="text-xs text-slate-400 uppercase mt-1 label">
                     {{ auth()->user()->role }}
                 </div>
             </div>
 
-            <!-- NAV LINKS -->
-            <nav class="space-y-2 px-4 flex-1">
+            <!-- NAV -->
+            <nav class="space-y-2 px-2 flex-1">
 
-                {{-- DASHBOARD (ALL ROLES) --}}
                 <a href="{{ route('dashboard') }}"
-                    class="flex items-center px-3 py-2 hover:bg-slate-800 rounded transition">
-                    🏠 <span class="ml-3">Dashboard</span>
+                    class="sidebar-item text-sm pl-6"
+                    data-label="Dashboard">
+                    <span class="icon">🏠</span>
+                    <span class="label">Dashboard</span>
                 </a>
 
-                {{-- SIGINT COLLAPSIBLE --}}
+                <!-- SIGINT -->
                 <div x-data="{ open: {{ request()->is('sigint*') ? 'true' : 'false' }} }">
 
                     <button
                         @click="open = !open"
-                        class="flex items-center w-full px-3 py-2 hover:bg-slate-800 rounded transition">
+                        class="sidebar-item w-full text-sm pl-6"
+                        data-label="SIGINT">
 
-                        💻
-                        <span class="ml-3 flex-1 text-left">SIGINT</span>
-                        <span class="transition-transform" :class="open ? 'rotate-90' : ''">▶</span>
+                        <span class="icon">💻</span>
+                        <span class="label flex-1 text-left">SIGINT</span>
+                        <span class="label" :class="open ? 'rotate-90' : ''">▶</span>
                     </button>
 
                     <div
                         x-show="open"
                         x-transition
-                        class="ml-10 mt-1 space-y-2 text-slate-400"
+                        class="mt-1 space-y-2 text-slate-400 sidebar-sub"
                         style="display: none;">
 
-                        {{-- FREQUENCY DATABASE (ALL ROLES) --}}
                         <a href="{{ route('sigint.frequency.index') }}"
-                            class="flex items-center hover:text-white">
-                            📡 <span class="ml-2">Radio Frequency</span>
+                            class="sidebar-item text-sm pl-6"
+                            data-label="Radio Frequency">
+                            <span class="icon">📡</span>
+                            <span class="label">Radio Frequency</span>
                         </a>
 
-                        {{-- SRE (ALL ROLES) --}}
                         <a href="{{ route('sigint.sre.index') }}"
-                            class="flex items-center hover:text-white">
-                            🧭 <span class="ml-2">SRE System</span>
+                            class="sidebar-item text-sm pl-6"
+                            data-label="SRE System">
+                            <span class="icon">🧭</span>
+                            <span class="label">SRE System</span>
                         </a>
                     </div>
                 </div>
 
-                {{-- GEOINT (ALL ROLES) --}}
                 <a href="{{ route('geoint.index') }}"
-                    class="flex items-center px-3 py-2 hover:bg-slate-800 rounded transition">
-                    ✈ <span class="ml-3">GEOINT</span>
+                    class="sidebar-item text-sm pl-6"
+                    data-label="GEOINT">
+                    <span class="icon">✈️</span>
+                    <span class="label">GEOINT</span>
                 </a>
 
-                {{-- D-FORENSICS (ADMIN ONLY placeholder) --}}
                 <a href="{{ route('dforensics.index') }}"
-                    class="flex items-center px-3 py-2 hover:bg-slate-800 rounded transition">
-                    🧬 <span class="ml-3">D-FORENSICS</span>
+                    class="sidebar-item text-sm pl-6"
+                    data-label="D-FORENSICS">
+                    <span class="icon">🧬</span>
+                    <span class="label">D-FORENSICS</span>
                 </a>
-
 
             </nav>
 
-            {{-- ACCOUNT SECTION --}}
+            <!-- FOOTER -->
             <div class="pt-4 border-t border-slate-700">
 
                 <a href="{{ route('profile.edit') }}"
-                    class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-700/50 transition">
-                    👤 <span>Profile</span>
+                    class="sidebar-item text-sm pl-6"
+                    data-label="Profile">
+                    <span class="icon">👤</span>
+                    <span class="label">Profile</span>
                 </a>
 
                 <a href="{{ route('profile.edit') }}#password"
-                    class="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-700/50 transition">
-                    🔑 <span>Change Password</span>
+                    class="sidebar-item text-sm pl-6"
+                    data-label="Change Password">
+                    <span class="icon">🔑</span>
+                    <span class="label">Change Password</span>
                 </a>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button
-                        type="submit"
-                        class="w-full flex items-center gap-3 px-4 py-3
-                           text-red-400 hover:bg-red-500/10 hover:text-red-300 transition">
-                        🚪 <span>Logout</span>
+                    <button type="submit"
+                        class="sidebar-item text-sm pl-6"
+                        data-label="Logout">
+                        <span class="icon">🚪</span>
+                        <span class="label">Logout</span>
                     </button>
                 </form>
 
@@ -110,55 +222,47 @@
 
         </aside>
 
-        <!-- MAIN CONTENT -->
-        <main class="flex-1 p-6 lg:p-8 bg-slate-950">
+        <!-- MAIN -->
+        <main id="mainContent"
+            class="flex-1 p-6 lg:p-8 bg-slate-950 transition-all duration-300 ml-[250px]">
             {{ $slot }}
+
+            <button onclick="toggleMobileSidebar()"
+                class="lg:hidden mb-4 px-3 py-2 bg-slate-800 rounded text-white">
+                ☰ Menu
+            </button>
         </main>
 
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    {{-- SUCCESS ALERT --}}
-    @if(session('success'))
     <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: '{{ session("success") }}',
-            timer: 2000,
-            showConfirmButton: false,
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const main = document.getElementById('mainContent');
+
+            sidebar.classList.toggle('sidebar-collapsed');
+
+            if (sidebar.classList.contains('sidebar-collapsed')) {
+                main.style.marginLeft = "5px";
+                localStorage.setItem('sidebar', 'collapsed');
+            } else {
+                main.style.marginLeft = "5px";
+                localStorage.setItem('sidebar', 'expanded');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const main = document.getElementById('mainContent');
+
+            if (localStorage.getItem('sidebar') === 'collapsed') {
+                sidebar.classList.add('sidebar-collapsed');
+                main.style.marginLeft = "5px";
+            } else {
+                main.style.marginLeft = "5px";
+            }
         });
     </script>
-    @endif
-
-    {{-- ERROR ALERT --}}
-    @if ($errors->any())
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Validation Error',
-            html: `{!! implode('<br>', $errors->all()) !!}`,
-        });
-    </script>
-    @endif
-
-    @if(session('ctg_alert') && auth()->user()?->role === 'admin')
-    <script>
-        Swal.fire({
-            icon: 'warning',
-            title: '⚠️ CTG WATCHLIST ALERT',
-            html: `
-        <strong>Critical Frequency Detected</strong><br>
-        This entry is marked as <b>CTG</b> and is on the <b>Watchlist</b>.
-    `,
-            confirmButtonText: 'View Frequency',
-            confirmButtonColor: '#dc2626'
-        }).then(() => {
-            window.location.href = "{{ route('sigint.frequency.index') }}";
-        });
-    </script>
-    @endif
 
 </body>
 

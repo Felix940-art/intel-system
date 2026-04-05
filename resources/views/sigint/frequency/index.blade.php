@@ -279,9 +279,19 @@
                         @if($f->threat_confronted)
                         @php
                         $threatColors = [
+                        'SRC' => 'bg-blue-500/10 text-blue-300 border-blue-500/30',
                         'SRGU' => 'bg-red-500/10 text-red-300 border-red-500/30',
                         'SRMA' => 'bg-orange-500/10 text-orange-300 border-orange-500/30',
-                        'SRMA BROWSER' => 'bg-pink-500/10 text-pink-300 border-pink-500/30',
+                        'SROC' => 'bg-green-500/10 text-green-300 border-green-500/30',
+                        'SRMA EMPORIUM' => 'bg-yellow-500/10 text-yellow-300 border-yellow-500/30',
+                        'SRMA ARCTIC' => 'bg-teal-500/10 text-teal-300 border-teal-500/30',
+                        'SRMA BROWSER' => 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30',
+                        'SRMA SESAME' => 'bg-purple-500/10 text-purple-300border-purple-500/30',
+                        'SRMA LEVOX' => 'bg-pink-500/10 text-pink-300 border-pink-500/30',
+                        'COMTECH' => 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30',
+                        'EV MRGU' => 'bg-red-500/10 text-red-300 border-red-500/30',
+                        'FUNCTIONAL' => 'bg-purple-500/10 text-purple-300 border-purple-500/30',
+                        'UNKNOWN' => 'bg-slate-600/20 text-slate-300 border-slate-500/30',
                         ];
 
                         $threatStyle = $threatColors[$f->threat_confronted]
@@ -452,6 +462,7 @@
     <div class="p-4">
         {{ $frequencies->links() }}
     </div>
+
     </div>
 
     <style>
@@ -490,11 +501,12 @@
 
 <!-- FREQUENCY DELETE MODAL -->
 <div id="frequencyDeleteModal"
-    class="fixed inset-0 hidden items-center justify-center z-50">
+    class="fixed inset-0 z-50 flex items-center justify-center hidden">
 
     <!-- BACKDROP -->
     <div id="frequencyModalBackdrop"
-        class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300"
+        onclick="closeFrequencyDeleteModal()">
     </div>
 
     <!-- MODAL -->
@@ -670,9 +682,6 @@
 </script>
 
 <script>
-    const freqModal = document.getElementById('frequencyDeleteModal');
-    const freqBackdrop = document.getElementById('frequencyModalBackdrop');
-    const freqContent = document.getElementById('frequencyModalContent');
     const freqForm = document.getElementById('frequencyDeleteForm');
     const freqLabel = document.getElementById('frequencyLabel');
 
@@ -682,29 +691,36 @@
 
     let freqModalOpen = false;
 
-    function openFrequencyDeleteModal(id, frequencyValue) {
-        if (freqModalOpen) return;
+    function openFrequencyDeleteModal(id, frequency) {
+        const modal = document.getElementById('frequencyDeleteModal');
+        const backdrop = document.getElementById('frequencyModalBackdrop');
+        const content = document.getElementById('frequencyModalContent');
 
-        freqLabel.innerText = frequencyValue;
-        freqForm.action = `/sigint/frequency/${id}`;
+        // SHOW MODAL
+        modal.classList.remove('hidden');
 
-        freqModal.classList.remove('hidden');
-
+        // ANIMATE
         setTimeout(() => {
-            freqBackdrop.classList.remove('opacity-0');
-            freqContent.classList.remove('opacity-0', 'scale-95');
+            backdrop.classList.remove('opacity-0');
+            content.classList.remove('opacity-0', 'scale-95');
+            content.classList.add('opacity-100', 'scale-100');
         }, 10);
 
-        freqModalOpen = true;
+        // SET DATA
+        document.getElementById('frequencyLabel').innerText = frequency;
+        document.getElementById('frequencyDeleteForm').action = `/sigint/frequency/${id}`;
     }
 
     function closeFrequencyDeleteModal() {
-        freqBackdrop.classList.add('opacity-0');
-        freqContent.classList.add('opacity-0', 'scale-95');
+        const modal = document.getElementById('frequencyDeleteModal');
+        const backdrop = document.getElementById('frequencyModalBackdrop');
+        const content = document.getElementById('frequencyModalContent');
+
+        backdrop.classList.add('opacity-0');
+        content.classList.add('opacity-0', 'scale-95');
 
         setTimeout(() => {
-            freqModal.classList.add('hidden');
-            freqModalOpen = false;
+            modal.classList.add('hidden');
         }, 300);
     }
 

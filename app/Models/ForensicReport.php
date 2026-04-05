@@ -9,6 +9,8 @@ class ForensicReport extends Model
 {
     use HasFactory;
 
+    protected $table = 'forensic_reports';
+
     protected $fillable = [
         'extraction_date',
         'location',

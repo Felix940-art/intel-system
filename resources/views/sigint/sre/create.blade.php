@@ -81,10 +81,10 @@
                         type="text"
                         name="lac"
                         value="{{ old('lac') }}"
-                        placeholder="5-digit LAC"
+                        placeholder="enter LAC"
                         class="input-dark @error('lac') ring-2 ring-red-500 @enderror">
                     @error('lac')
-                    <p class="mt-1 text-xs text-red-400">LAC must be 5 digits.</p>
+                    <p class="mt-1 text-xs text-red-400">LAC must be a valid number.</p>
                     @enderror
                 </div>
 
@@ -94,12 +94,50 @@
                         type="text"
                         name="cid"
                         value="{{ old('cid') }}"
-                        placeholder="5-digit CID"
+                        placeholder="enter CID"
                         class="input-dark @error('cid') ring-2 ring-red-500 @enderror">
                     @error('cid')
-                    <p class="mt-1 text-xs text-red-400">CID must be 5 digits.</p>
+                    <p class="mt-1 text-xs text-red-400">CID must be a valid number.</p>
                     @enderror
                 </div>
+            </div>
+
+            <!-- BTS LOCATION -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <div>
+                    <label class="label-dark">BTS Location (Name)</label>
+                    <input type="text"
+                        name="bts_location"
+                        value="{{ old('bts_location') }}"
+                        placeholder="e.g. Tacloban Tower A"
+                        class="input-dark">
+                </div>
+
+                <div>
+                    <label class="label-dark">Latitude</label>
+                    <input type="number"
+                        name="bts_lat"
+                        value="{{ old('bts_lat') }}"
+                        placeholder="11.2434"
+                        class="input-dark"
+                        step="0.000001"
+                        min="-90"
+                        max="90">
+                </div>
+
+                <div>
+                    <label class="label-dark">Longitude</label>
+                    <input type="number"
+                        name="bts_lng"
+                        value="{{ old('bts_lng') }}"
+                        placeholder="125.0045"
+                        class="input-dark"
+                        step="0.0001"
+                        min="-180"
+                        max="180">
+                </div>
+
             </div>
 
             <!-- THREAT CONFRONTED -->

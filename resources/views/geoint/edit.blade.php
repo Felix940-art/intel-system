@@ -43,12 +43,9 @@
                 <div>
                     <label class="form-label">UAV Platform</label>
 
-                    <select name="uav"
-                        id="uavSelect"
-                        class="form-input"
-                        required>
+                    <select name="uav" id="uavSelect" class="form-input">
                         <option value="">Select UAV</option>
-                        @foreach(['THOR','Griffin','Matrix 1','Matrix 2'] as $uav)
+                        @foreach(['THOR','Griffin','DJI MATRICE 1','DJI MATRICE 2','DJI MATRICE 3','DJI MATRICE 4'] as $uav)
                         <option value="{{ $uav }}"
                             {{ $record->uav == $uav ? 'selected' : '' }}>
                             {{ $uav }}
@@ -99,11 +96,7 @@
                 <div>
                     <label class="form-label">Threat Confronted</label>
 
-                    <select name="threat_confronted"
-                        id="threatSelect"
-                        class="form-input"
-                        required>
-
+                    <select name="threat_confronted" id="threatSelect" class="form-input">
                         <option value="">Select Threat</option>
                         @foreach(['SRC','SRGU','SRMA','SROC','SRMA EMPORIUM','SRMA ARCTIC','SRMA BROWSER','SRMA SESAME','SRMA LEVOX','COMTECH','EV MRGU','UNKNOWN'] as $threat)
                         <option value="{{ $threat }}"
@@ -124,10 +117,7 @@
                 <div>
                     <label class="form-label">Classification</label>
 
-                    <select name="classification"
-                        id="classificationSelect"
-                        class="form-input"
-                        required>
+                    <select name="classification" id="classificationSelect" class="form-input">
                         @foreach(['UNCLASSIFIED','RESTRICTED','CONFIDENTIAL','SECRET'] as $class)
                         <option value="{{ $class }}"
                             {{ $record->classification == $class ? 'selected' : '' }}>
@@ -182,6 +172,7 @@
 
         .form-input {
             width: 100%;
+            background-color: #020617;
             background: linear-gradient(145deg, #0b1220, #0f172a);
             border: 1px solid #1e293b;
             border-radius: 10px;
@@ -201,6 +192,17 @@
             box-shadow:
                 0 0 0 1px #06b6d4,
                 0 0 15px rgba(6, 182, 212, 0.3);
+        }
+
+        select {
+            background-color: #020617;
+            color: #e2e8f0;
+            boarder: 1px solid #1e293b;
+        }
+
+        select option {
+            background-color: #020617;
+            color: #e2e8f0;
         }
 
         select.form-input {
@@ -261,6 +263,36 @@
             animation: intelPulse 1.8s infinite;
         }
     </style>
+
+    <script>
+        const uavSelect = document.getElementById('uavSelect');
+        const uavPreview = document.getElementById('uavPreview');
+
+        const uavColors = {
+            "THOR": "bg-cyan-500/10 text-cyan-300 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,.4)]",
+            "Griffin": "bg-emerald-500/10 text-emerald-300 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,.4)]",
+            "DJI MATRICE 1": "bg-indigo-500/10 text-indigo-300 border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,.4)]",
+            "DJI MATRICE 2": "bg-fuchsia-500/10 text-fuchsia-300 border-fuchsia-500/30 shadow-[0_0_15px_rgba(217,70,239,.4)]",
+            "DJI MATRICE 3": "bg-pink-500/10 text-pink-300 border-pink-500/30 shadow-[0_0_15px_rgba(236,72,153,.4)]",
+            "DJI MATRICE 4": "bg-yellow-500/10 text-yellow-300 border-yellow-500/30 shadow-[0_0_15px_rgba(250,204,21,.4)]"
+        };
+
+        uavSelect.addEventListener('change', function() {
+
+            const value = uavSelect.value;
+
+            if (!value) {
+                uavPreview.classList.add('hidden');
+                return;
+            }
+
+            uavPreview.className =
+                "px-3 py-1 text-xs rounded-full border transition-all duration-300 " + uavColors[value];
+
+            uavPreview.innerText = value;
+            uavPreview.classList.remove('hidden');
+        });
+    </script>
 
     <script>
         const standardLayer = L.tileLayer(

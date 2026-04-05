@@ -51,8 +51,10 @@
                         <option value="">Select UAV</option>
                         <option value="THOR">THOR</option>
                         <option value="Griffin">Griffin</option>
-                        <option value="Matrix 1">Matrix 1</option>
-                        <option value="Matrix 2">Matrix 2</option>
+                        <option value="DJI MATRICE 1">DJI MATRICE 1</option>
+                        <option value="DJI MATRICE 2">DJI MATRICE 2</option>
+                        <option value="DJI MATRICE 3">DJI MATRICE 3</option>
+                        <option value="DJI MATRICE 4">DJI MATRICE 4</option>
                     </select>
 
                     {{-- LIVE UAV BADGE --}}
@@ -357,8 +359,10 @@
         const uavColors = {
             "THOR": "bg-cyan-500/10 text-cyan-300 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,.4)]",
             "Griffin": "bg-emerald-500/10 text-emerald-300 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,.4)]",
-            "Matrix 1": "bg-indigo-500/10 text-indigo-300 border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,.4)]",
-            "Matrix 2": "bg-fuchsia-500/10 text-fuchsia-300 border-fuchsia-500/30 shadow-[0_0_15px_rgba(217,70,239,.4)]"
+            "DJI MATRICE 1": "bg-indigo-500/10 text-indigo-300 border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,.4)]",
+            "DJI MATRICE 2": "bg-fuchsia-500/10 text-fuchsia-300 border-fuchsia-500/30 shadow-[0_0_15px_rgba(217,70,239,.4)]",
+            "DJI MATRICE 3": "bg-pink-500/10 text-pink-300 border-pink-500/30 shadow-[0_0_15px_rgba(236,72,153,.4)]",
+            "DJI MATRICE 4": "bg-yellow-500/10 text-yellow-300 border-yellow-500/30 shadow-[0_0_15px_rgba(250,204,21,.4)]"
         };
 
         uavSelect.addEventListener('change', function() {

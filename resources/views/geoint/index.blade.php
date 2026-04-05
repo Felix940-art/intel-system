@@ -223,17 +223,26 @@
         <!-- DOCUMENT PREVIEW MODAL -->
         <div id="docPreviewModal" class="fixed inset-0 z-50 hidden">
 
+            <!-- BACKFROP -->
             <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"
                 onclick="closeDocPreview()"></div>
 
+            <!-- CONTENT -->
             <div class="absolute inset-0 flex items-center justify-center p-6">
 
                 <div class="bg-slate-900 border border-slate-700
-                    rounded-xl w-full max-w-4xl h-[80vh] p-4">
+                    rounded-xl w-full max-w-5xl h-[80vh] p-4 flex items-center justify-center">
 
-                    <iframe id="docPreviewFrame"
-                        class="w-full h-full rounded-lg"
+                    <!-- IMAGE PREVIEW -->
+                    <img id="docPreviewImage"
+                        class="hidden max-w-full max-h-full object-contain rounded-lg"
                         src="">
+
+                    <!-- DOCUMENT PREVIEW -->
+                    <iframe id="docPreviewFrame"
+                        class="hidden w-full h-full rounded-lg"
+                        src=""
+                        alt="Document Preview">
                     </iframe>
 
                 </div>
@@ -460,15 +469,50 @@
 
 <script>
     function openDocPreview(url) {
-        document.getElementById('docPreviewFrame').src = url;
-        document.getElementById('docPreviewModal').classList.remove('hidden');
+        const image = document.getElementById('docPreviewImage');
+        const frame = document.getElementById('docPreviewFrame');
+        const modal = document.getElementById('docPreviewModal');
+
+        // Get file extension
+        const extension = url.split('.').pop().toLowerCase();
+
+        // IMAGE FILES
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+            image.src = url;
+            image.classList.remove('hidden');
+
+            frame.src = '';
+            frame.classList.add('hidden');
+        }
+        // OTHER FILES (PDF, DOC, etc.)
+        else {
+            frame.src = url;
+            frame.classList.remove('hidden');
+
+            image.src = '';
+            image.classList.add('hidden');
+        }
+
+        modal.classList.remove('hidden');
     }
 
     function closeDocPreview() {
-        document.getElementById('docPreviewModal').classList.add('hidden');
-        document.getElementById('docPreviewFrame').src = '';
+        const image = document.getElementById('docPreviewImage');
+        const frame = document.getElementById('docPreviewFrame');
+        const modal = document.getElementById('docPreviewModal');
+
+        modal.classList.add('hidden');
+
+        // Reset sources
+        image.src = '';
+        frame.src = '';
+
+        // Hide both
+        image.classList.add('hidden');
+        frame.classList.add('hidden');
     }
 
+    // ESC key support
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             const modal = document.getElementById('docPreviewModal');

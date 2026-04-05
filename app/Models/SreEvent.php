@@ -12,7 +12,10 @@ class SreEvent extends Model
         'imei',
         'imsi',
         'lac',
-        'cid'
+        'cid',
+        'bts_location',
+        'bts_lat',
+        'bts_lng'
     ];
 
     protected $casts = [

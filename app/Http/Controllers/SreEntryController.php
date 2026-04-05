@@ -39,11 +39,14 @@ class SreEntryController extends Controller
             'observed_at'  => ['required', 'date'],
             'imei'         => ['nullable', 'digits:15'],
             'imsi'         => ['nullable', 'digits:15'],
-            'lac'          => ['nullable', 'digits:5'],
-            'cid'          => ['nullable', 'digits:5'],
-            'threat_group' => ['nullable', 'string'],
+            'lac'          => ['nullable', 'numeric'],
+            'cid'          => ['nullable', 'numeric'],
+            'threat_group' => ['nullable', 'string', 'max:100'],
             'code_name'    => ['nullable', 'string', 'max:100'],
-            'remarks'      => ['nullable', 'string'],
+            'remarks'      => ['nullable', 'string', 'max:500'],
+            'bts_location' => ['nullable', 'string', 'max:255'],
+            'bts_lat'      => ['nullable', 'numeric', 'between:-90,90', 'required_with:bts_lng'],
+            'bts_lng'      => ['nullable', 'numeric', 'between:-180,180', 'required_with:bts_lat'],
         ]);
 
         $selector = SreSelector::firstOrCreate(
@@ -65,6 +68,9 @@ class SreEntryController extends Controller
             'imsi' => $validated['imsi'] ?? null,
             'lac' => $validated['lac'] ?? null,
             'cid' => $validated['cid'] ?? null,
+            'bts_location' => $validated['bts_location'] ?? null,
+            'bts_lat'      => $validated['bts_lat'] ?? null,
+            'bts_lng'      => $validated['bts_lng'] ?? null,
         ]);
 
         return redirect()
@@ -85,10 +91,13 @@ class SreEntryController extends Controller
             'observed_at'   => ['required', 'date'],
             'imei'          => ['nullable', 'digits:15'],
             'imsi'          => ['nullable', 'digits:15'],
-            'lac'           => ['nullable', 'digits:5'],
-            'cid'           => ['nullable', 'digits:5'],
+            'lac'          => ['nullable', 'numeric'],
+            'cid'          => ['nullable', 'numeric'],
             'threat_group'  => ['nullable', 'string'],
             'code_name'     => ['nullable', 'string', 'max:100'],
+            'bts_location' => ['nullable', 'string'],
+            'bts_lat'      => ['nullable', 'numeric'],
+            'bts_lng'      => ['nullable', 'numeric'],
         ]);
 
         // Update selector
@@ -96,6 +105,9 @@ class SreEntryController extends Controller
             'selector_value' => $validated['selector'],
             'threat_group'   => $validated['threat_group'] ?? null,
             'code_name'      => $validated['code_name'] ?? null,
+            'bts_location' => $validated['bts_location'] ?? null,
+            'bts_lat'      => $validated['bts_lat'] ?? null,
+            'bts_lng'      => $validated['bts_lng'] ?? null,
         ]);
 
         // Update event

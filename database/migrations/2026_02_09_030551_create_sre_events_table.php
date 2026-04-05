@@ -20,6 +20,9 @@ return new class extends Migration {
             $table->string('imsi')->nullable();
             $table->string('lac')->nullable();
             $table->string('cid')->nullable();
+            $table->string('bts_location')->nullable();
+            $table->decimal('bts_lat', 10, 7)->nullable();
+            $table->decimal('bts_lng', 10, 7)->nullable();
 
             $table->timestamps();
         });

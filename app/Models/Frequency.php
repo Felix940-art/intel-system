@@ -12,6 +12,8 @@ class Frequency extends Model
 {
     use HasFactory;
 
+    protected $table = 'frequencies';
+
     protected $fillable = [
         'frequency',
         'datetime_code',

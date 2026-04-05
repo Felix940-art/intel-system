@@ -83,6 +83,38 @@
 
             </div>
 
+            <!-- BTS LOCATION -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <div>
+                    <label class="label-dark">BTS Location (Name)</label>
+                    <input type="text"
+                        name="bts_location"
+                        value="{{ old('bts_location', $event->bts_location) }}"
+                        placeholder="e.g. Tacloban Tower A"
+                        class="input-dark">
+                </div>
+
+                <div>
+                    <label class="label-dark">Latitude</label>
+                    <input type="text"
+                        name="bts_lat"
+                        value="{{ old('bts_lat', $event->bts_lat) }}"
+                        placeholder="11.2434"
+                        class="input-dark">
+                </div>
+
+                <div>
+                    <label class="label-dark">Longitude</label>
+                    <input type="text"
+                        name="bts_lng"
+                        value="{{ old('bts_lng', $event->bts_lng) }}"
+                        placeholder="125.0045"
+                        class="input-dark">
+                </div>
+
+            </div>
+
             <!-- THREAT -->
             <div>
                 <label class="label-dark">Threat Confronted</label>

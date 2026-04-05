@@ -10,7 +10,6 @@ class SreDashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $events = SreEvent::with('selector')->latest()->get();
         $query = SreEvent::with('selector');
 
         // SEARCH
@@ -20,16 +19,18 @@ class SreDashboardController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('imei', 'like', "%$search%")
                     ->orWhere('imsi', 'like', "%$search%")
-                    ->orWhere('code_name', 'like', "%$search%")
                     ->orWhereHas('selector', function ($sq) use ($search) {
-                        $sq->where('selector_value', 'like', "%$search%");
+                        $sq->where('selector_value', 'like', "%$search%")
+                            ->orWhere('code_name', 'like', "%$search%");
                     });
             });
         }
 
         // THREAT FILTER
         if ($request->filled('threat')) {
-            $query->where('description', $request->threat);
+            $query->whereHas('selector', function ($q) use ($request) {
+                $q->where('threat_group', $request->threat);
+            });
         }
 
         // DATE FILTER
@@ -37,11 +38,12 @@ class SreDashboardController extends Controller
             $query->whereDate('observed_at', $request->date);
         }
 
-        $events = $query->orderBy('observed_at', 'desc')->get()
-            ->groupBy(fn($e) => $e->date_time_group);
+        $events = $query
+            ->orderBy('observed_at', 'desc')
+            ->paginate(10);
 
         return view('sigint.sre.dashboard', [
-            'groupedEvents' => $events,
+            'events' => $events,
             'threats' => [
                 'SRC',
                 'SRGU',

@@ -1,17 +1,19 @@
 <!-- DELETE MODAL -->
-<div id="deleteModal" class="fixed inset-0 z-50 hidden">
+<div id="deleteModal"
+    class="fixed inset-0 z-50 flex items-center justify-center hidden">
 
     <div id="modalBackdrop"
-        class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300"
+        onclick="closeDeleteModal()">
     </div>
 
     <div class="absolute inset-0 flex items-center justify-center p-4">
 
+        <!--- Modal Content -->
         <div id="modalContent"
-            class="bg-slate-900 border border-slate-700
-                   rounded-2xl w-full max-w-md p-6 shadow-2xl
-                   transform scale-95 opacity-0
-                   transition-all duration-300">
+            class="relative bg-slate-900 border border-slate-700
+                rounded-2xl w-full max-w-md p-6 shadow-2xl
+                opacity-0 scale-95 transition-all duration-300">
 
             <div class="flex items-start gap-4">
                 <div class="bg-red-600/20 text-red-400 p-3 rounded-xl">⚠</div>
@@ -210,7 +212,7 @@
                     name="search"
                     value="{{ request('search') }}"
                     placeholder="Search selector, IMEI, IMSI, code name..."
-                    class="filter-input w-80">
+                    class="filter-input flex-1 w-80">
 
                 {{-- THREAT --}}
                 <select name="threat"
@@ -239,7 +241,7 @@
                              text-indigo-300
                              border border-indigo-500/30
                              backdrop-blur-md">
-                        {{ collect($groupedEvents)->flatten()->count() }} Results
+                        {{ $events->total() }} Results
                     </span>
 
                     {{-- FILTER --}}
@@ -332,17 +334,18 @@
                     <th class="px-5 py-3 text-left">IMSI</th>
                     <th class="px-5 py-3 text-left">LAC</th>
                     <th class="px-5 py-3 text-left">CID</th>
+                    <th class="px-5 py-3 text-left">BTS</th>
                     <th class="px-5 py-3 text-left">Threat</th>
                     <th class="px-5 py-3 text-right">Action</th>
                 </tr>
             </thead>
 
             <tbody>
-                @forelse($groupedEvents as $group => $items)
-
-                @foreach($items as $e)
+                @forelse($events as $event)
 
                 @php
+                $threat = $event->selector->threat_group ?? 'UNKNOWN';
+
                 $threatColors = [
                 'SRC' => 'bg-blue-500/10 text-blue-300 border-blue-500/30',
                 'SRGU' => 'bg-red-500/10 text-red-300 border-red-500/30',
@@ -359,8 +362,7 @@
                 'UNKNOWN' => 'bg-slate-600/20 text-slate-300 border-slate-500/30',
                 ];
 
-                $threatStyle = $threatColors[$e->threat_group]
-                ?? 'bg-slate-600/20 text-slate-300 border-slate-500/30';
+                $threatStyle = $threatColors[$threat] ?? $threatColors['UNKNOWN'];
                 @endphp
 
                 <tr class="animate-rowFade
@@ -368,17 +370,17 @@
                                 transition duration-300
                                 hover:scale-[1.01]
                                 hover:shadow-lg
-                                {{ $e->description === 'UNKNOWN' ? '' : 'hover:shadow-red-500/20' }}">
+                                {{ $event->description === 'UNKNOWN' ? '' : 'hover:shadow-red-500/20' }}">
 
                     <td class="px-5 py-4 text-slate-300">
-                        {{ optional($e->created_at)->format('d M Y H:i') ?? '—' }}
+                        {{ optional($event->created_at)->format('d M Y H:i') ?? '—' }}
                     </td>
 
                     <td class="px-5 py-4 text-center">
-                        @if($e->selector->code_name)
+                        @if($event->selector->code_name)
                         <span class="px-3 py-1 text-xs rounded-full
                                 bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
-                            {{ $e->selector->code_name ?? '—' }}
+                            {{ $event->selector->code_name ?? '—' }}
                         </span>
                         @else
                         —
@@ -386,18 +388,30 @@
                     </td>
 
                     <td class="px-5 py-4 text-slate-300 font-medium">
-                        {{ $e->selector->selector_value ?? '—' }}
+                        {{ $event->selector->selector_value ?? '—' }}
                     </td>
 
-                    <td class="px-5 py-4 text-slate-300">{{ $e->imei ?? '—' }}</td>
-                    <td class="px-5 py-4 text-slate-300">{{ $e->imsi ?? '—' }}</td>
-                    <td class="px-5 py-4 text-slate-300">{{ $e->lac ?? '—' }}</td>
-                    <td class="px-5 py-4 text-slate-300">{{ $e->cid ?? '—' }}</td>
+                    <td class="px-5 py-4 text-slate-300">{{ $event->imei ?? '—' }}</td>
+                    <td class="px-5 py-4 text-slate-300">{{ $event->imsi ?? '—' }}</td>
+                    <td class="px-5 py-4 text-slate-300">{{ $event->lac ?? '—' }}</td>
+                    <td class="px-5 py-4 text-slate-300">{{ $event->cid ?? '—' }}</td>
 
+                    <td class="px-5 py-5 text-slate-300">
+                        @if($event->bts_location)
+                        <div class="text-xs">
+                            <div>{{ $event->bts_location }}</div>
+                            <div class="text-slate-500">
+                                {{ $event->bts_lat }}, {{ $event->bts_lng }}
+                            </div>
+                        </div>
+                        @else
+                        --
+                        @endif
+                    </td>
                     <td class="px-5 py-4 text-center">
-                        @if($e->selector && $e->selector->threat_group)
+                        @if($event->selector && $event->selector->threat_group)
                         <span class="px-3 py-1 text-xs rounded-full border {{ $threatStyle }}">
-                            {{ $e->selector->threat_group }}
+                            {{ $event->selector->threat_group }}
                         </span>
                         @else
                         —
@@ -406,13 +420,13 @@
 
                     <td class="px-5 py-4 text-right">
                         <div class="flex justify-end gap-4">
-                            <a href="{{ route('sigint.sre.edit', $e->id) }}"
+                            <a href="{{ route('sigint.sre.edit', $event->id) }}"
                                 class="text-blue-400 hover:text-blue-300 transition">
                                 Edit
                             </a>
 
                             <button
-                                onclick="openDeleteModal({{ $e->id }})"
+                                onclick="openDeleteModal({{ $event->id }})"
                                 class="text-red-400 hover:text-red-300 transition">
                                 Delete
                             </button>
@@ -420,8 +434,6 @@
                     </td>
 
                 </tr>
-
-                @endforeach
 
                 @empty
 
@@ -451,6 +463,17 @@
                 @endforelse
             </tbody>
         </table>
+
+        <div class="flex justify-between items-center mt-4 text-sm text-slate-400">
+            <span>
+                Showing {{ $events->firstItem() }} to {{ $events->lastItem() }}
+                of {{ $events->total() }} results
+            </span>
+
+            {{ $events->appends(request()->query())->links() }}
+        </div>
+
+
     </div>
 </x-app-layout>
 
@@ -488,30 +511,20 @@
     /* ============================= */
 
     .filter-input {
-        background: linear-gradient(145deg,
-                rgba(15, 23, 42, 0.95),
-                rgba(2, 6, 23, 0.95));
-
-        border: 1px solid rgba(51, 65, 85, 0.8);
-        color: #e2e8f0;
-
-        border-radius: 12px;
-        padding: 10px 14px;
-        font-size: 0.875rem;
-
-        transition: all .25s ease;
+        background: #020617;
+        border: 1px solid #334155;
+        color: #eae5eb;
+        border-radius: 0.5rem;
+        padding: 0.55rem 0.75rem;
     }
 
     .filter-input::placeholder {
-        color: #64748b;
+        color: #94b899;
     }
 
     .filter-input:focus {
         outline: none;
-        border-color: rgba(59, 130, 246, 0.7);
-        box-shadow:
-            0 0 0 2px rgba(59, 130, 246, .25),
-            0 0 20px rgba(59, 130, 246, .15);
+        border-color: #3b82f6;
     }
 
     /* Fix Date Icon Color */
@@ -589,9 +602,6 @@
 @endif
 
 <script>
-    const modal = document.getElementById('deleteModal');
-    const backdrop = document.getElementById('modalBackdrop');
-    const content = document.getElementById('modalContent');
     const form = document.getElementById('deleteForm');
 
     const confirmBtn = document.getElementById('confirmDeleteBtn');
@@ -601,14 +611,20 @@
     let modalOpen = false;
 
     function openDeleteModal(id) {
+        const modal = document.getElementById('deleteModal');
+        const backdrop = document.getElementById('modalBackdrop');
+        const content = document.getElementById('modalContent');
+
+        modal.classList.remove('hidden');
+
         if (modalOpen) return;
 
         form.action = "{{ url('sigint/sre') }}/" + id;
-        modal.classList.remove('hidden');
 
         setTimeout(() => {
             backdrop.classList.remove('opacity-0');
             content.classList.remove('opacity-0', 'scale-95');
+            content.classList.add('opacity-100', 'scale-100');
         }, 10);
 
         modalOpen = true;
@@ -620,12 +636,15 @@
     }
 
     function closeDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        const backdrop = document.getElementById('modalBackdrop');
+        const content = document.getElementById('modalContent');
+
         backdrop.classList.add('opacity-0');
         content.classList.add('opacity-0', 'scale-95');
 
         setTimeout(() => {
             modal.classList.add('hidden');
-            modalOpen = false;
         }, 300);
     }
 
@@ -649,8 +668,6 @@
         confirmBtn.classList.add('opacity-80');
     });
 </script>
-
-
 
 <script>
     document.getElementById('sreImportBtn')?.addEventListener('click', function() {
