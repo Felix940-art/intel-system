@@ -32,9 +32,12 @@ class GeoInt extends Model
     protected static function booted()
     {
         static::created(function ($model) {
+
+            $user = auth()->user();
+
             AuditLog::create([
-                'user_id'    => auth()->id(),
-                'role'       => auth()->user()->role ?? null,
+                'user_id'    => $user?->id,
+                'role'       => $user?->role,
                 'module'     => 'GEOINT',
                 'action'     => 'CREATE',
                 'model'      => 'GeoInt',
@@ -45,9 +48,12 @@ class GeoInt extends Model
         });
 
         static::updated(function ($model) {
+
+            $user = auth()->user();
+
             AuditLog::create([
-                'user_id'    => auth()->id(),
-                'role'       => auth()->user()->role ?? null,
+                'user_id'    => $user?->id,
+                'role'       => $user?->role,
                 'module'     => 'GEOINT',
                 'action'     => 'UPDATE',
                 'model'      => 'GeoInt',
@@ -58,9 +64,12 @@ class GeoInt extends Model
         });
 
         static::deleted(function ($model) {
+
+            $user = auth()->user();
+
             AuditLog::create([
-                'user_id'    => auth()->id(),
-                'role'       => auth()->user()->role ?? null,
+                'user_id'    => $user?->id,
+                'role'       => $user?->role,
                 'module'     => 'GEOINT',
                 'action'     => 'DELETE',
                 'model'      => 'GeoInt',

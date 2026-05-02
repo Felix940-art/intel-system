@@ -161,6 +161,11 @@
                                 Download
                             </a>
 
+                            <form id="deleteForm" method="POST" style="display:none;">
+                                @csrf
+                                @method('DELETE')
+                            </form>
+
                         </div>
 
                         @else
@@ -196,10 +201,16 @@
                                 Edit
                             </a>
 
-                            <button onclick="openDeleteModal({{ $record->id }})"
-                                class="text-red-400 hover:text-red-300">
-                                Delete
-                            </button>
+                            <form action="{{ route('geoint.destroy', $record->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+
+                                <button
+                                    onclick="openDeleteModal({{ $record->id }}, '{{ $record->home_point_mgrs }}')"
+                                    class="text-red-400 hover:text-red-300">
+                                    Delete
+                                </button>
+                            </form>
 
                         </div>
                     </td>
@@ -251,6 +262,50 @@
         </div>
 
 
+    </div>
+
+    <!-- DELETE MODAL -->
+    <div id="deleteModal" class="fixed inset-0 z-50 hidden">
+
+        <!-- BACKDROP -->
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onclick="closeDeleteModal()"></div>
+
+        <!-- MODAL -->
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6">
+
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="bg-red-500/20 p-2 rounded-lg">
+                        ⚠️
+                    </div>
+                    <h2 class="text-lg font-semibold text-white">
+                        Delete GEOINT Record
+                    </h2>
+                </div>
+
+                <p class="text-sm text-slate-300 mb-2">
+                    Home Point: <span id="deleteRecordInfo" class="font-medium text-white"></span>
+                </p>
+
+                <p class="text-sm text-red-400 mb-6">
+                    This action permanently removes this record.
+                </p>
+
+                <div class="flex justify-end gap-3">
+                    <button onclick="closeDeleteModal()"
+                        class="px-4 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg">
+                        Cancel
+                    </button>
+
+                    <button onclick="submitDelete()"
+                        class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg">
+                        Confirm Delete
+                    </button>
+                </div>
+
+            </div>
+        </div>
     </div>
 
     {{-- ========================================= --}}
@@ -532,4 +587,28 @@
             }
         }
     });
+</script>
+
+<script>
+    let deleteId = null;
+
+    function openDeleteModal(id, info) {
+        deleteId = id;
+
+        document.getElementById('deleteRecordInfo').innerText = info;
+        document.getElementById('deleteModal').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+        deleteId = null;
+    }
+
+    function submitDelete() {
+        if (!deleteId) return;
+
+        const form = document.getElementById('deleteForm');
+        form.action = `/geoint/${deleteId}`;
+        form.submit();
+    }
 </script>

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use SimpleSoftwareIO\QrCode\DataTypes\Geo;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class GeoIntController extends Controller
 {
@@ -242,5 +243,27 @@ class GeoIntController extends Controller
         return redirect()
             ->route('geoint.index')
             ->with('success', 'Mission updated successfully.');
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $record = \App\Models\GeoInt::findOrFail($id);
+
+            // OPTIONAL: if you store files
+            // if ($record->file_path) {
+            //     Storage::delete($record->file_path);
+            // }
+
+            $record->delete();
+
+            return redirect()->route('geoint.index')
+                ->with('success', 'Record deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error('DELETE ERROR: ' . $e->getMessage());
+
+            return redirect()->route('geoint.index')
+                ->with('error', 'Delete failed: ' . $e->getMessage());
+        }
     }
 }
