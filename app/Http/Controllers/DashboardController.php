@@ -9,12 +9,16 @@ use App\Models\ForensicReport;
 use App\Models\SreEvent;
 use App\Models\AuditLog;
 use Illuminate\Support\Facades\DB;
+use App\Services\ThreatDetectionService;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        $alerts = ThreatDetectionService::run();
+        $threatScore = ThreatDetectionService::score();
+
         // =========================
         // TOTAL COUNTS (REAL DATA)
         // =========================
@@ -130,7 +134,7 @@ class DashboardController extends Controller
             $alerts->push([
                 'type' => 'high',
                 'title' => 'SIGINT Threat Detected',
-                'message' => "$watchSignals watchlisted signals detected"
+                'message' => "$watchSignals Signals detected"
             ]);
         }
 
@@ -202,6 +206,54 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
 
+        // THREAT SCORE CALCULATION
+        $threatScore =
+            ($rfCount * 2) +
+            ($sreCount * 3) +
+            ($geoint * 1.5) +
+            ($dforensics * 2);
+
+        // Normalize (max 100)
+        $threatScore = min(100, $threatScore);
+
+        // DETERMINE ALERT LEVEL
+        $alerts = [];
+
+        usort($alerts, function ($a, $b) {
+            $priority = ['HIGH' => 3, 'MEDIUM' => 2, 'LOW' => 1];
+            return $priority[$b['level']] <=> $priority[$a['level']];
+        });
+
+        if ($threatScore >= 70) {
+            $alerts[] = [
+                'level' => 'HIGH',
+                'message' => 'SIGINT Threat Detected',
+                'details' => "{$rfCount} signals detected"
+            ];
+        } elseif ($threatScore >= 40) {
+            $alerts[] = [
+                'level' => 'MEDIUM',
+                'message' => 'Suspicious Activity',
+                'details' => 'Moderate intelligence anomalies'
+            ];
+        } elseif ($threatScore >= 20) {
+            $alerts[] = [
+                'level' => 'LOW',
+                'message' => 'Background Activity',
+                'details' => 'Normal monitoring'
+            ];
+        }
+
+        $mapPoints = \App\Models\SreEvent::select(
+            'bts_lat as lat',
+            'bts_lng as lng',
+            'bts_location',
+            'imei',
+            'imsi',
+            'observed_at'
+        )->whereNotNull('bts_lat')
+            ->whereNotNull('bts_lng')
+            ->get();
 
         return view('dashboard', compact(
             'sigint',
@@ -224,8 +276,21 @@ class DashboardController extends Controller
             'forensicsData',
             'forensics',
             'alerts',
-            'activities'
+            'activities',
+            'threatScore',
+            'forensics',
+            'mapPoints'
 
         ));
+    }
+
+    public function liveTrend()
+    {
+        return response()->json([
+            'time' => now()->format('H:i:s'),
+            'sigint' => rand(0, 20),
+            'geoint' => rand(0, 10),
+            'dforensics' => rand(0, 5),
+        ]);
     }
 }

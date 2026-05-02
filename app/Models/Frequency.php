@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Models\AuditLog;
 
 
 class Frequency extends Model
@@ -121,5 +122,48 @@ class Frequency extends Model
         return $created === $updated
             ? "First detected on {$created}."
             : "First detected on {$created}, last updated on {$updated}.";
+    }
+
+
+    protected static function booted()
+    {
+        static::created(function ($model) {
+            AuditLog::create([
+                'user_id'    => auth()->id(),
+                'role'       => auth()->user()->role ?? null,
+                'module'     => 'FREQUENCY',
+                'action'     => 'CREATE',
+                'model'      => 'Frequency',
+                'record_id'  => $model->id,
+                'ip_address' => request()->ip(),
+                'description' => 'Created FREQUENCY ID: ' . $model->id,
+            ]);
+        });
+
+        static::updated(function ($model) {
+            AuditLog::create([
+                'user_id'    => auth()->id(),
+                'role'       => auth()->user()->role ?? null,
+                'module'     => 'FREQUENCY',
+                'action'     => 'UPDATE',
+                'model'      => 'Frequency',
+                'record_id'  => $model->id,
+                'ip_address' => request()->ip(),
+                'description' => 'Updated FREQUENCY ID: ' . $model->id,
+            ]);
+        });
+
+        static::deleted(function ($model) {
+            AuditLog::create([
+                'user_id'    => auth()->id(),
+                'role'       => auth()->user()->role ?? null,
+                'module'     => 'FREQUENCY',
+                'action'     => 'DELETE',
+                'model'      => 'Frequency',
+                'record_id'  => $model->id,
+                'ip_address' => request()->ip(),
+                'description' => 'Deleted FREQUENCY ID: ' . $model->id,
+            ]);
+        });
     }
 }

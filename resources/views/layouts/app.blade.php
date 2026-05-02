@@ -8,6 +8,8 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <style>
         /* ================================
            SIDEBAR BASE
@@ -187,6 +189,10 @@
                     data-label="D-FORENSICS">
                     <span class="icon">🧬</span>
                     <span class="label">D-FORENSICS</span>
+                </a>
+
+                <a href="/audit-logs" class="sidebar-item">
+                    📋 <span class="label">Audit Logs</span>
                 </a>
 
             </nav>

@@ -10,6 +10,118 @@
             </p>
         </div>
 
+        <div id="top-alert-container">
+            @if(!empty($alerts))
+            @php
+            $first = $alerts[0];
+
+            if (is_string($first)) {
+            $first = [
+            'level' => 'LOW',
+            'message' => $first,
+            'details' => ''
+            ];
+            }
+
+            $level = $first['level'] ?? 'LOW';
+            @endphp
+
+            <div class="
+@if($level === 'HIGH') threat-high
+@elseif($level === 'MEDIUM') bg-yellow-500/10 text-yellow-400
+@else bg-blue-500/10 text-blue-400
+@endif">
+
+                <strong>{{ $level }}</strong> —
+                {{ $first['message'] ?? '' }}
+                {{ $first['details'] ?? '' }}
+
+            </div>
+            @endif
+        </div>
+
+        <div id="alert-container" class="space-y-3">
+            @forelse($alerts as $alert)
+
+            @php
+            if (is_string($alert)) {
+            $alert = [
+            'level' => 'LOW',
+            'message' => $alert,
+            'details' => ''
+            ];
+            }
+
+            $level = $alert['level'] ?? 'LOW';
+            @endphp
+
+            <div class="border-l-4 pl-3
+            @if($level === 'HIGH') border-red-500
+            @elseif($level === 'MEDIUM') border-yellow-500
+            @else border-blue-500
+            @endif">
+
+                <p class="text-sm font-semibold">
+                    {{ $alert['message'] ?? 'Unknown alert' }}
+                </p>
+
+                @if(!empty($alert['details']))
+                <p class="text-xs text-gray-400">
+                    {{ $alert['details'] }}
+                </p>
+                @endif
+
+            </div>
+
+            @empty
+            <p class="text-gray-400 text-sm">No active threats</p>
+            @endforelse
+        </div>
+
+        <div class="mb-4 p-4 rounded-xl border border-slate-700 bg-slate-900">
+            <div class="flex items-center justify-between">
+
+                <div>
+                    <p class="text-sm text-gray-400">Threat Level</p>
+
+                    @php
+                    $level = match(true) {
+                    $threatScore >= 70 => 'CRITICAL',
+                    $threatScore >= 40 => 'ELEVATED',
+                    $threatScore >= 20 => 'GUARDED',
+                    default => 'LOW'
+                    };
+
+                    $color = match($level) {
+                    'CRITICAL' => 'red',
+                    'ELEVATED' => 'yellow',
+                    'GUARDED' => 'blue',
+                    default => 'green'
+                    };
+                    @endphp
+
+                    <p class="text-xl font-bold text-{{ $color }}-400">
+                        {{ $level }}
+                    </p>
+                </div>
+
+                <div class="text-right">
+                    <p class="text-sm text-gray-400">Score</p>
+                    <p class="text-2xl font-bold" data-threat-score>
+                        {{ $threatScore }}/100
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mt-3 w-full bg-slate-700 rounded-full h-2">
+                <div class="h-2 rounded-full bg-{{ $color }}-500"
+                    data-threat-bar
+                    style="width: {{ $threatScore }}%"></div>
+            </div>
+        </div>
+
         <!-- STATUS CARDS -->
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2">
 
@@ -46,9 +158,12 @@
             <!-- TACTICAL MAP -->
             <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
                 <h2 class="text-sm font-semibold mb-4">Deployment Map</h2>
-                <div id="map"
-                    class="rounded-xl border border-slate-800 mt-4"
-                    style="height:300px;"></div>
+                <div id="map" style="height: 400px; border-radius: 12px;"></div>
+                <div class="mt-2 text-xs text-gray-400">
+                    <span class="text-red-400">● HIGH</span> |
+                    <span class="text-orange-400">● MEDIUM</span> |
+                    <span class="text-blue-400">● LOW</span>
+                </div>
             </div>
         </div>
 
@@ -83,28 +198,43 @@
                     <h2 class="font-semibold text-sm">Alerts</h2>
                 </div>
 
-                <div class="p-5 space-y-4 text-sm">
+                <div class="p-5 space-y-4 text-sm" id="alerts-panel">
+
                     @forelse($alerts as $alert)
 
+                    @php
+                    if (is_string($alert)) {
+                    $alert = [
+                    'level' => 'LOW',
+                    'message' => $alert,
+                    'details' => ''
+                    ];
+                    }
+
+                    $level = $alert['level'] ?? 'LOW';
+                    @endphp
+
                     <div class="border-l-4 pl-3
-                @if($alert['type'] == 'high') border-red-600
-                @elseif($alert['type'] == 'warning') border-yellow-500
-                @else border-blue-500
-                @endif
-            ">
-                        <div class="
-                    @if($alert['type'] == 'high') text-red-400
-                    @elseif($alert['type'] == 'warning') text-yellow-400
-                    @else text-blue-400
-                    @endif
-                    font-semibold
-                ">
-                            {{ $alert['title'] }}
+        @if($level === 'HIGH') border-red-600
+        @elseif($level === 'MEDIUM') border-yellow-500
+        @else border-blue-500
+        @endif">
+
+                        <div class="font-semibold
+            @if($level === 'HIGH') text-red-400
+            @elseif($level === 'MEDIUM') text-yellow-400
+            @else text-blue-400
+            @endif">
+
+                            {{ $alert['message'] ?? 'Unknown alert' }}
                         </div>
 
-                        <div class="text-slate-300">
-                            {{ $alert['message'] }}
+                        @if(!empty($alert['details']))
+                        <div class="text-slate-300 text-xs">
+                            {{ $alert['details'] }}
                         </div>
+                        @endif
+
                     </div>
 
                     @empty
@@ -112,6 +242,7 @@
                         No active alerts
                     </div>
                     @endforelse
+
                 </div>
             </div>
 
@@ -173,14 +304,22 @@
     <!-- SCRIPTS -->
 
     <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     {{-- LIBRARIES --}}
+    <!-- Leaflet (you already have this) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@2.4.0/Control.FullScreen.css" />
-    <script src="https://unpkg.com/leaflet.fullscreen@2.4.0/Control.FullScreen.js"></script>
+
+    <!-- Marker Cluster -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+    <!-- Heatmap -->
     <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
-    <script src="https://unpkg.com/mgrs@1.0.0/dist/mgrs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- ✅ ADD THIS (DRAW TOOL) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css" />
+    <script src="https://unpkg.com/leaflet-draw/dist/leaflet.draw.js"></script>
 
     <script>
         const rawData = @json($heatData ?? []);
@@ -302,4 +441,98 @@
             }
         });
     </script>
+
+    <script>
+        async function fetchThreatData() {
+            try {
+                const res = await fetch('/api/threat-status');
+                const data = await res.json();
+
+                updateAlerts(data.alerts);
+                updateScore(data.score);
+
+            } catch (e) {
+                console.error('Threat fetch failed', e);
+            }
+        }
+
+        function normalizeAlert(alert) {
+            if (typeof alert === 'string') {
+                return {
+                    level: 'LOW',
+                    message: alert,
+                    details: ''
+                };
+            }
+            return alert;
+        }
+
+        function updateAlerts(alerts) {
+            const container = document.getElementById('alerts-container');
+            const panel = document.getElementById('alerts-panel');
+
+            if (!container) return;
+
+            let html = '';
+
+            alerts.forEach(a => {
+                const alert = normalizeAlert(a);
+
+                let color = 'blue';
+                if (alert.level === 'HIGH') color = 'red';
+                else if (alert.level === 'MEDIUM') color = 'yellow';
+
+                html += `
+            <div class="border-l-4 pl-3 border-${color}-500">
+                <p class="text-sm font-semibold">${alert.message}</p>
+                <p class="text-xs text-gray-400">${alert.details ?? ''}</p>
+            </div>
+        `;
+            });
+
+            container.innerHTML = html || '<p class="text-gray-400 text-sm">No active threats</p>';
+
+            // also update panel
+            if (panel) panel.innerHTML = html;
+        }
+
+        function updateScore(score) {
+            const scoreEl = document.querySelector('[data-threat-score]');
+            const bar = document.querySelector('[data-threat-bar]');
+
+            if (scoreEl) scoreEl.innerText = score + '/100';
+            if (bar) bar.style.width = score + '%';
+
+            if (score >= 70) {
+                document.body.classList.add('bg-red-950');
+            } else {
+                document.body.classList.remove('bg-red-950');
+            }
+        }
+
+        // auto refresh every 5s
+        setInterval(fetchThreatData, 5000);
+
+        // initial run
+        fetchThreatData();
+    </script>
+
+    <style>
+        @keyframes threat-blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .threat-high {
+            animation: threat-blink 1s infinite;
+        }
+    </style>
+
 </x-app-layout>

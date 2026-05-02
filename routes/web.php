@@ -10,6 +10,7 @@ use App\Http\Controllers\SreDashboardController;
 use App\Http\Controllers\SreEntryController;
 use App\Http\Controllers\GeoIntController;
 use App\Http\Controllers\DForensicsController;
+use App\Http\Controllers\AuditLogController;
 use App\Models\ActivityLog;
 
 /*
@@ -51,7 +52,22 @@ Route::middleware(['auth'])->group(function () {
     */
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/audit-logs', [AuditLogController::class, 'index']);
 
+    /*
+    |--------------------------------------------------------------------------
+    | API ROUTE
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/api/threat-status', function () {
+        return response()->json([
+            'alerts' => \App\Services\ThreatDetectionService::run(),
+            'score' => \App\Services\ThreatDetectionService::score()
+        ]);
+    })->middleware('auth');
+
+    Route::get('/api/live-trend', [DashboardController::class, 'liveTrend']);
 
     /*
     |--------------------------------------------------------------------------

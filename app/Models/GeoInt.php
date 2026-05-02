@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\AuditLog;
 
 class GeoInt extends Model
 {
@@ -27,4 +28,46 @@ class GeoInt extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    protected static function booted()
+    {
+        static::created(function ($model) {
+            AuditLog::create([
+                'user_id'    => auth()->id(),
+                'role'       => auth()->user()->role ?? null,
+                'module'     => 'GEOINT',
+                'action'     => 'CREATE',
+                'model'      => 'GeoInt',
+                'record_id'  => $model->id,
+                'ip_address' => request()->ip(),
+                'description' => 'Created GEOINT ID: ' . $model->id,
+            ]);
+        });
+
+        static::updated(function ($model) {
+            AuditLog::create([
+                'user_id'    => auth()->id(),
+                'role'       => auth()->user()->role ?? null,
+                'module'     => 'GEOINT',
+                'action'     => 'UPDATE',
+                'model'      => 'GeoInt',
+                'record_id'  => $model->id,
+                'ip_address' => request()->ip(),
+                'description' => 'Updated GEOINT ID: ' . $model->id,
+            ]);
+        });
+
+        static::deleted(function ($model) {
+            AuditLog::create([
+                'user_id'    => auth()->id(),
+                'role'       => auth()->user()->role ?? null,
+                'module'     => 'GEOINT',
+                'action'     => 'DELETE',
+                'model'      => 'GeoInt',
+                'record_id'  => $model->id,
+                'ip_address' => request()->ip(),
+                'description' => 'Deleted GEOINT ID: ' . $model->id,
+            ]);
+        });
+    }
 }

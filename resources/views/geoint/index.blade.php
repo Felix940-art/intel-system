@@ -473,7 +473,6 @@
         const frame = document.getElementById('docPreviewFrame');
         const modal = document.getElementById('docPreviewModal');
 
-        // Get file extension
         const extension = url.split('.').pop().toLowerCase();
 
         // IMAGE FILES
@@ -484,7 +483,19 @@
             frame.src = '';
             frame.classList.add('hidden');
         }
-        // OTHER FILES (PDF, DOC, etc.)
+
+        // DOC / DOCX → GOOGLE VIEWER
+        else if (['doc', 'docx'].includes(extension)) {
+            const viewer = `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+
+            frame.src = viewer;
+            frame.classList.remove('hidden');
+
+            image.src = '';
+            image.classList.add('hidden');
+        }
+
+        // PDF and others
         else {
             frame.src = url;
             frame.classList.remove('hidden');
