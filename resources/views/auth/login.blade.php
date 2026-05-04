@@ -1,530 +1,335 @@
-<x-guest-layout>
-    <div class="relative min-h-screen flex items-center justify-center bg-[#020617] text-slate-200 overflow-hidden px-4">
+<!DOCTYPE html>
+<html lang="en">
 
-        <!-- Tactical Grid Background -->
-        <div class="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.04)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
 
-        <!-- Animated Radar Sweep -->
-        <div class="absolute insert-0 pointer-events-none overflow-hidden">
-            <div class="radar-sweep"></div>
-        </div>
+<body class="bg-[#020617]">
 
-        <!-- Soft Radial Glow -->
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-transparent to-cyan-900/20"></div>
+    <div class="noise"></div>
 
-        <!-- Classification Badge -->
-        <div class="absolute top-6 right-6 text-xs tracking-widest
-                    bg-red-600/20 border border-red-600/40
-                    text-red-400 px-3 py-1 rounded-md">
-            RESTRICTED ACCESS
-        </div>
+    <div class="w-full h-screen flex">
 
-        <!-- Login Panel -->
-        <div class="relative w-full max-w-md">
+        <!-- LEFT PANEL (IMMERSIVE VISUAL) -->
+        <div class="hidden md:flex w-2/3 relative overflow-hidden">
 
-            <div class="relative overflow-hidden">
+            <!-- 1. Background Image -->
+            <img src="{{ asset('images/security-bg.jpg') }}"
+                class="absolute inset-0 w-full h-full object-cover opacity-40">
 
-                <!-- Scan Line -->
+            <!-- 2. DARK BASE (IMPORTANT) -->
+            <div class="absolute inset-0 bg-[#020617]"></div>
+
+            <!-- 3. GRADIENT OVERLAY (YOUR CURRENT ONE, BUT KEEP IT HERE) -->
+            <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>
+
+            <!-- 4. OPTIONAL: GRID EFFECT -->
+            <div class="absolute inset-0 grid-overlay"></div>
+
+            <!-- 4.1 OPTIONAL: SCANNING SYSTEM LINE -->
+            <div class="absolute inset-0 pointer-events-none">
                 <div class="scan-line"></div>
+            </div>
 
-                <!-- Login Card -->
-                <div id="loginCard"
-                    class="relative bg-[#020617]/95 backdrop-blur-xl
-            border border-cyan-900/40
-            rounded-2xl
-            shadow-[0_0_40px_rgba(0,255,255,0.08)]
-            p-8 space-y-6
-            transition-all duration-300">
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-[500px] h-[500px]
+bg-cyan-500/10 blur-3xl"></div>
 
-                    <!-- Top Classification Strip -->
-                    <div class="absolute top-0 left-0 right-0 h-1
-                bg-gradient-to-r from-red-600 via-yellow-500 to-red-600
-                opacity-80 rounded-t-2xl"></div>
+            <!-- 5. CONTENT -->
+            <div class="relative z-10 flex flex-col justify-center px-20 space-y-6">
 
-                    <!-- Logo -->
-                    <div class="flex justify-center">
-                        <x-application-logo class="h-10 w-auto text-cyan-400 opacity-90" />
-                    </div>
+                <h1 class="text-5xl font-bold tracking-wide leading-tight text-white drop-shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                    YOU ARE<br>SECURE.
+                </h1>
 
-                    <!-- Header -->
-                    <div class="text-center space-y-1">
-                        <p class="text-xs tracking-[0.25em] text-cyan-400 uppercase">
-                            Secure Intelligence Node
-                        </p>
+                <p class="text-slate-300 text-lg leading-relaxed max-w-lg">
+                    Advanced Intelligence Monitoring System with encrypted command access,
+                    mission logging, and real-time surveillance integration.
+                </p>
 
-                        <h1 class="text-2xl font-semibold text-white tracking-wide">
-                            Command Authentication Portal
-                        </h1>
-
-                        <p class="text-xs text-slate-500">
-                            Encrypted Access • Clearance Required
-                        </p>
-
-                        <div class="text-[11px] text-slate-600 mt-1 tracking-widest">
-                            SESSION :: {{ now()->format('d.m.Y H:i:s') }}
-                        </div>
-                    </div>
-
-                    <!-- Login Form -->
-                    <form id="loginForm"
-                        method="POST"
-                        action="{{ route('login') }}"
-                        class="space-y-5">
-                        @csrf
-
-                        @if ($errors->any())
-                        <script>
-                            window.loginFailed = true;
-                        </script>
-                        @endif
-
-                        <!-- Email -->
-                        <div class="space-y-1">
-                            <label class="text-xs text-slate-400 tracking-widest uppercase">
-                                Email Identifier
-                            </label>
-
-                            <input type="email"
-                                name="email"
-                                value="{{ old('email') }}"
-                                required autofocus
-                                class="command-input w-full"
-                                placeholder="operator@agency.gov">
-                        </div>
-
-                        <!-- Password -->
-                        <div class="space-y-1">
-                            <label class="text-xs text-slate-400 tracking-widest uppercase">
-                                Access Key
-                            </label>
-
-                            <input type="password"
-                                name="password"
-                                required
-                                class="command-input w-full"
-                                placeholder="••••••••">
-                        </div>
-
-                        <!-- Clearance Dropdown -->
-                        <div class="space-y-1">
-                            <label class="text-xs text-slate-400 tracking-widest uppercase">
-                                Clearance Level
-                            </label>
-
-                            <select name="clearance"
-                                class="command-input w-full">
-                                <option>Level I - Restricted</option>
-                                <option>Level II - Confidential</option>
-                                <option>Level III - Secret</option>
-                                <option>Level IV - Top Secret</option>
-                            </select>
-                        </div>
-
-                        <!-- Submit -->
-                        <button type="submit"
-                            id="loginButton"
-                            class="command-button w-full">
-
-                            <span id="loginText">Authorize Access</span>
-
-                            <svg id="loginSpinner"
-                                class="hidden animate-spin h-5 w-5"
-                                viewBox="0 0 24 24">
-                                <circle class="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8v4l3-3-3-3v4a12 12 0 00-12 12h4z" />
-                            </svg>
-                        </button>
-                    </form>
-
-                    <!-- Footer -->
-                    <div class="text-center text-[11px] text-slate-600 pt-4 border-t border-slate-800 tracking-widest">
-                        © {{ date('Y') }} TICO Command System • Military Grade Encryption
-                    </div>
+                <div class="text-xs text-cyan-400 tracking-widest">
+                    Powered by TICO Command System • Secure Access Layer
                 </div>
 
             </div>
+
+            <div class="absolute inset-0 pointer-events-none">
+                <span class="node" style="top:30%; left:20%"></span>
+                <span class="node" style="top:60%; left:40%"></span>
+                <span class="node" style="top:50%; left:70%"></span>
+            </div>
+
         </div>
 
-        <!-- Styles -->
-        <style>
-            .intel-input {
-                width: 100%;
-                background: #0f172a;
-                border: 1px solid #334155;
-                color: #e2e8f0;
-                padding: .75rem 1rem;
-                border-radius: .75rem;
-                font-size: .875rem;
-                transition: all .25s ease;
+        <!-- RIGHT PANEL (LOGIN) -->
+        <div class="w-full md:w-1/3 flex">
+
+            <div id="loginCard"
+                class="w-full bg-[#020617]/90 backdrop-blur-xl
+            border border-cyan-900/30 rounded-2xl p-8 space-y-6
+            shadow-[0_0_30px_rgba(0,255,255,0.05)]
+            transition-all duration-300">
+
+                <div class="text-[10px] tracking-widest text-cyan-400 flex justify-between mb-4">
+                    <span>NODE STATUS: ACTIVE</span>
+                    <span>ENCRYPTION: AES-256</span>
+                </div>
+
+                <div class="absolute inset-0 border border-cyan-500/10 rounded-xl pointer-events-none"></div>
+
+                <!-- TOP BAR -->
+                <div class="h-1 w-16 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full"></div>
+
+                <!-- HEADER -->
+                <div class="text-center space-y-2">
+
+                    <x-application-logo class="h-10 text-cyan-400 opacity-90" />
+
+                    <p class="text-xs tracking-[0.3em] text-cyan-400 uppercase">
+                        Secure Intelligence Node
+                    </p>
+
+                    <h1 class="text-xl font-semibold text-white">
+                        Authentication Portal
+                    </h1>
+
+                    <p class="text-xs text-slate-500">
+                        Clearance Required
+                    </p>
+
+                </div>
+
+                <!-- FORM -->
+                <form id="loginForm" method="POST" action="{{ route('login') }}" class="space-y-5">
+                    @csrf
+
+                    @if ($errors->any())
+                    <script>
+                        window.loginFailed = true;
+                    </script>
+                    @endif
+
+                    <!-- EMAIL -->
+                    <div class="space-y-1">
+                        <label class="text-xs text-slate-400 tracking-widest uppercase">
+                            Email Identifier
+                        </label>
+
+                        <input type="email"
+                            name="email"
+                            value="{{ old('email') }}"
+                            required autofocus
+                            placeholder="operator@agency.gov"
+                            class="input-clean w-full">
+                    </div>
+
+                    <!-- PASSWORD -->
+                    <div class="space-y-1">
+                        <label class="text-xs text-slate-400 tracking-widest uppercase">
+                            Access Key
+                        </label>
+
+                        <input type="password"
+                            name="password"
+                            required
+                            placeholder="••••••••"
+                            class="input-clean w-full">
+                    </div>
+
+                    <!-- CLEARANCE -->
+                    <div class="space-y-1">
+                        <label class="text-xs text-slate-400 tracking-widest uppercase">
+                            Clearance Level
+                        </label>
+
+                        <select name="clearance" class="input-clean w-full">
+                            <option>Level I - Restricted</option>
+                            <option>Level II - Confidential</option>
+                            <option>Level III - Secret</option>
+                            <option>Level IV - Top Secret</option>
+                        </select>
+                    </div>
+
+                    <!-- SUBMIT -->
+                    <button id="loginButton" class="btn-clean w-full relative overflow-hidden">
+                        <span id="loginText">Authorize Access</span>
+                        <span id="loginLoader" class="hidden absolute inset-0 flex items-center justify-center">
+                            <span class="loader"></span>
+                        </span>
+                    </button>
+
+                </form>
+
+                <!-- FOOTER -->
+                <div class="text-center text-[11px] text-slate-600 pt-4 border-t border-slate-800 tracking-widest">
+                    © {{ date('Y') }} TICO Command System • Secure Access Layer
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- STYLES -->
+    <style>
+        .input-clean {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: 0.75rem;
+            padding: 0.7rem 1rem;
+            font-size: 0.875rem;
+            color: #e2e8f0;
+            transition: all 0.25s ease;
+        }
+
+        .input-clean:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.25);
+            background: #0b1220;
+        }
+
+        .btn-clean {
+            background: linear-gradient(90deg, #0891b2, #2563eb);
+            padding: 0.8rem;
+            border-radius: 0.9rem;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+        .btn-clean:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 18px rgba(6, 182, 212, 0.35);
+        }
+
+        .loader {
+            width: 18px;
+            height: 18px;
+            border: 2px solid transparent;
+            border-top: 2px solid #06b6d4;
+            border-right: 2px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .grid-overlay {
+            background-image:
+                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .noise {
+            position: fixed;
+            inset: 0;
+            background-image: url('https://www.transparenttextures.com/patterns/noise.png');
+            opacity: 0.02;
+            pointer-events: none;
+        }
+
+        .node {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #06b6d4;
+            border-radius: 9999px;
+            box-shadow: 0 0 10px #06b6d4;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
             }
 
-            .intel-input:focus {
-                outline: none;
-                border-color: #3b82f6;
-                box-shadow:
-                    0 0 0 2px rgba(59, 130, 246, .25),
-                    0 0 20px rgba(59, 130, 246, .15);
+            50% {
+                opacity: 1;
+                transform: scale(1.8);
+            }
+        }
+
+        .sweep-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.4), transparent);
+            animation: sweepMove 6s linear infinite;
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(0, 255, 255, 0.5),
+                    transparent);
+            animation: scanMove 5s linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes scanMove {
+            0% {
+                top: -5%;
             }
 
-            .intel-btn {
-                width: 100%;
-                background: linear-gradient(90deg, #1d4ed8, #2563eb);
-                padding: .75rem;
-                border-radius: .75rem;
-                font-weight: 600;
-                font-size: .875rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: .5rem;
-                transition: all .2s ease;
+            100% {
+                top: 105%;
+            }
+        }
+
+        @keyframes sweepMove {
+            0% {
+                top: -10%;
             }
 
-            .intel-btn:hover {
-                box-shadow: 0 0 20px rgba(59, 130, 246, .35);
+            100% {
+                top: 110%;
             }
+        }
+    </style>
 
-            .intel-btn:active {
-                transform: scale(.98);
-            }
-        </style>
+    <!-- SCRIPT -->
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const loginButton = document.getElementById('loginButton');
+        const loginText = document.getElementById('loginText');
+        const loginCard = document.getElementById('loginCard');
+        const form = document.querySelector('form');
+        const btn = document.getElementById('loginButton');
+        const text = document.getElementById('loginText');
+        const loader = document.getElementById('loginLoader');
 
-        <style>
-            .scan-line {
-                position: absolute;
-                top: -100%;
-                left: 0;
-                width: 100%;
-                height: 120%;
-                background: linear-gradient(to bottom,
-                        transparent 0%,
-                        rgba(59, 130, 246, 0.08) 45%,
-                        rgba(59, 130, 246, 0.25) 50%,
-                        rgba(59, 130, 246, 0.08) 55%,
-                        transparent 100%);
-                animation: scanSweep 2.5s ease-out forwards;
-                pointer-events: none;
-            }
+        form.addEventListener('submit', function() {
 
-            @keyframes scanSweep {
-                0% {
-                    top: -120%;
-                }
+            btn.disabled = true;
+            text.textContent = "AUTHENTICATING...";
+            loader.classList.remove('hidden');
 
-                100% {
-                    top: 120%;
-                }
-            }
-        </style>
+            setTimeout(() => {
+                text.textContent = "VERIFYING CLEARANCE...";
+            }, 500);
 
-        <style>
-            .biometric-pulse {
-                position: relative;
-            }
+        });
 
-            .biometric-pulse::before {
-                content: "";
-                position: absolute;
-                inset: 0;
-                border-radius: 0.75rem;
-                background: radial-gradient(circle at center,
-                        rgba(59, 130, 246, 0.35),
-                        transparent 70%);
-                opacity: 0;
-                animation: biometricPulse 3s infinite ease-in-out;
-            }
+        /* FAILED LOGIN */
+        if (window.loginFailed) {
+            loginCard.classList.add('animate-pulse', 'border-red-500');
+        }
+    </script>
 
-            @keyframes biometricPulse {
-                0% {
-                    opacity: 0;
-                    transform: scale(0.95);
-                }
+</body>
 
-                40% {
-                    opacity: 0.35;
-                    transform: scale(1.02);
-                }
-
-                70% {
-                    opacity: 0.15;
-                    transform: scale(1.01);
-                }
-
-                100% {
-                    opacity: 0;
-                    transform: scale(0.95);
-                }
-            }
-        </style>
-
-        <style>
-            select option {
-                background-color: #0f172a;
-                color: #e2e8f0;
-            }
-        </style>
-
-        <style>
-            .auth-input {
-                width: 100%;
-                border-radius: 0.75rem;
-                background: rgba(15, 23, 42, 0.9);
-                border: 1px solid rgba(59, 130, 246, 0.2);
-                padding: 0.6rem 1rem;
-                color: #e2e8f0;
-                transition: all 0.3s ease;
-            }
-
-            .auth-input:focus {
-                outline: none;
-                border-color: #06b6d4;
-                box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.3);
-            }
-
-            .auth-button {
-                background: linear-gradient(90deg, #2563eb, #06b6d4);
-                border-radius: 0.75rem;
-                padding: 0.6rem;
-                font-weight: 600;
-                color: white;
-                transition: all 0.3s ease;
-            }
-
-            .auth-button:hover {
-                box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
-            }
-        </style>
-
-        <script>
-            function startAuthScan() {
-
-                const overlay = document.getElementById('authScanOverlay');
-                const scanText = document.getElementById('scanText');
-
-                overlay.classList.remove('opacity-0', 'pointer-events-none');
-
-                const steps = [
-                    "Encrypting Credentials...",
-                    "Validating Identity Signature...",
-                    "Checking Clearance Level...",
-                    "Establishing Secure Channel...",
-                    "Clearance Verified."
-                ];
-
-                let index = 0;
-
-                const interval = setInterval(() => {
-
-                    scanText.innerText = steps[index];
-                    index++;
-
-                    if (index >= steps.length) {
-                        clearInterval(interval);
-
-                        setTimeout(() => {
-                            overlay.classList.add('opacity-0');
-                            overlay.classList.add('pointer-events-none');
-                            goToPhase2();
-                        }, 600);
-                    }
-
-                }, 700);
-            }
-        </script>
-
-        <style>
-            .scan-line {
-                position: absolute;
-                top: -100%;
-                left: 0;
-                width: 100%;
-                height: 4px;
-                background: linear-gradient(to bottom,
-                        transparent,
-                        rgba(6, 182, 212, 0.6),
-                        transparent);
-                animation: scanMove 3s linear infinite;
-            }
-
-            @keyframes scanMove {
-                0% {
-                    top: -10%;
-                }
-
-                100% {
-                    top: 110%;
-                }
-            }
-        </style>
-
-        <style>
-            /* Tactical Input */
-            .command-input {
-                background: #0f172a;
-                border: 1px solid rgba(0, 255, 255, 0.15);
-                border-radius: 0.75rem;
-                padding: 0.75rem 1rem;
-                font-size: 0.875rem;
-                color: #e2e8f0;
-                transition: all .25s ease;
-            }
-
-            .command-input:focus {
-                outline: none;
-                border-color: #06b6d4;
-                box-shadow: 0 0 15px rgba(6, 182, 212, .4);
-                background: #0b1220;
-            }
-
-            /* Tactical Button */
-            .command-button {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: .5rem;
-                padding: .8rem 1rem;
-                border-radius: .9rem;
-                font-weight: 600;
-                background: linear-gradient(90deg, #0891b2, #2563eb);
-                color: white;
-                box-shadow: 0 0 20px rgba(37, 99, 235, .3);
-                transition: all .25s ease;
-            }
-
-            .command-button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 0 25px rgba(6, 182, 212, .6);
-            }
-
-            /* Radar Sweep */
-            .radar-sweep {
-                position: absolute;
-                width: 200%;
-                height: 2px;
-                background: linear-gradient(90deg, transparent, rgba(0, 255, 255, .4), transparent);
-                animation: sweep 5s linear infinite;
-            }
-
-            @keyframes sweep {
-                0% {
-                    top: -10%;
-                }
-
-                100% {
-                    top: 110%;
-                }
-            }
-
-            /* FAILED LOGIN SHAKE */
-            @keyframes tacticalShake {
-
-                0%,
-                100% {
-                    transform: translateX(0);
-                }
-
-                20% {
-                    transform: translateX(-6px);
-                }
-
-                40% {
-                    transform: translateX(6px);
-                }
-
-                60% {
-                    transform: translateX(-4px);
-                }
-
-                80% {
-                    transform: translateX(4px);
-                }
-            }
-
-            .login-shake {
-                animation: tacticalShake 0.4s ease;
-            }
-
-            /* RED FLASH */
-            @keyframes redFlash {
-                0% {
-                    box-shadow: 0 0 0 rgba(255, 0, 0, 0);
-                }
-
-                50% {
-                    box-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
-                }
-
-                100% {
-                    box-shadow: 0 0 0 rgba(255, 0, 0, 0);
-                }
-            }
-
-            .login-fail {
-                border-color: rgba(255, 0, 0, 0.6) !important;
-                animation: redFlash 0.6s ease;
-            }
-
-            /* ACCESS GRANTED */
-            @keyframes accessGranted {
-                0% {
-                    box-shadow: 0 0 0 rgba(0, 255, 120, 0);
-                }
-
-                50% {
-                    box-shadow: 0 0 50px rgba(0, 255, 120, 0.8);
-                }
-
-                100% {
-                    box-shadow: 0 0 0 rgba(0, 255, 120, 0);
-                }
-            }
-
-            .login-success {
-                border-color: rgba(0, 255, 120, 0.7) !important;
-                animation: accessGranted 0.8s ease;
-            }
-        </style>
-
-        <script>
-            const loginForm = document.getElementById('loginForm');
-            const loginButton = document.getElementById('loginButton');
-            const loginText = document.getElementById('loginText');
-            const loginSpinner = document.getElementById('loginSpinner');
-            const loginCard = document.getElementById('loginCard');
-
-            /* FAILED LOGIN EFFECT */
-            if (window.loginFailed) {
-                loginCard.classList.add('login-shake', 'login-fail');
-
-                setTimeout(() => {
-                    loginCard.classList.remove('login-shake', 'login-fail');
-                }, 800);
-            }
-
-            /* SUBMIT BEHAVIOR */
-            loginForm.addEventListener('submit', function() {
-
-                loginButton.disabled = true;
-                loginText.textContent = "Verifying Clearance...";
-                loginSpinner.classList.remove('hidden');
-                loginButton.classList.add('opacity-80');
-
-                // ACCESS GRANTED effect (visual before redirect)
-                setTimeout(() => {
-                    loginCard.classList.add('login-success');
-                    loginText.textContent = "ACCESS GRANTED";
-
-                    document.body.style.background = "#001a12";
-                }, 600);
-            });
-        </script>
-
-
-</x-guest-layout>
+</html>
