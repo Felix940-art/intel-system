@@ -464,15 +464,9 @@
             </tbody>
         </table>
 
-        <div class="flex justify-between items-center mt-4 text-sm text-slate-400">
-            <span>
-                Showing {{ $events->firstItem() }} to {{ $events->lastItem() }}
-                of {{ $events->total() }} results
-            </span>
-
-            {{ $events->appends(request()->query())->links() }}
+        <div class="p-4 border-t border-slate-800 text-slate-300">
+            {{ $events->links('pagination::tailwind') }}
         </div>
-
 
     </div>
 </x-app-layout>

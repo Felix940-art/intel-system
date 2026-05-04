@@ -161,11 +161,6 @@
                                 Download
                             </a>
 
-                            <form id="deleteForm" method="POST" style="display:none;">
-                                @csrf
-                                @method('DELETE')
-                            </form>
-
                         </div>
 
                         @else
@@ -201,16 +196,12 @@
                                 Edit
                             </a>
 
-                            <form action="{{ route('geoint.destroy', $record->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-
-                                <button
-                                    onclick="openDeleteModal({{ $record->id }}, '{{ $record->home_point_mgrs }}')"
-                                    class="text-red-400 hover:text-red-300">
-                                    Delete
-                                </button>
-                            </form>
+                            <button
+                                type="button"
+                                onclick="openDeleteModal({{ $record->id }}, '{{ $record->home_point_mgrs }}')"
+                                class="text-red-400 hover:text-red-300">
+                                Delete
+                            </button>
 
                         </div>
                     </td>
@@ -231,6 +222,16 @@
 
 
         </table>
+
+        <div class="p-4 border-t border-slate-800 text-slate-300">
+            {{ $geointRecords->links('pagination::tailwind') }}
+        </div>
+
+        <form id="deleteForm" method="POST" style="display:none;">
+            @csrf
+            @method('DELETE')
+        </form>
+
         <!-- DOCUMENT PREVIEW MODAL -->
         <div id="docPreviewModal" class="fixed inset-0 z-50 hidden">
 
@@ -523,6 +524,10 @@
 </x-app-layout>
 
 <script>
+    const deleteUrlTemplate = "{{ route('geoint.destroy', ':id') }}";
+</script>
+
+<script>
     function openDocPreview(url) {
         const image = document.getElementById('docPreviewImage');
         const frame = document.getElementById('docPreviewFrame');
@@ -601,14 +606,19 @@
 
     function closeDeleteModal() {
         document.getElementById('deleteModal').classList.add('hidden');
+        document.getElementById('deleteRecordInfo').innerText = ''; // 👈 add this
         deleteId = null;
     }
 
     function submitDelete() {
         if (!deleteId) return;
 
+        const btn = event.target;
+        btn.disabled = true;
+        btn.innerText = "Deleting...";
+
         const form = document.getElementById('deleteForm');
-        form.action = `/geoint/${deleteId}`;
+        form.action = deleteUrlTemplate.replace(':id', deleteId);
         form.submit();
     }
 </script>
