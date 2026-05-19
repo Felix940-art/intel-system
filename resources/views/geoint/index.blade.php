@@ -180,7 +180,7 @@
                     </td>
 
                     {{-- THREAT --}}
-                    <td class="px-5 py-4 text-center">
+                    <td class="px-5 py-4 text-slate-300">
                         <span class="px-3 py-1 text-xs rounded-full border
                                 {{ $threatColors[$record->threat_confronted] ?? 'bg-slate-800 text-slate-400 border-slate-600' }}">
                             {{ $record->threat_confronted ?? 'N/A' }}

@@ -2,124 +2,124 @@
 
     <div class="space-y-2">
 
-        <!-- PAGE HEADER -->
-        <div>
-            <h1 class="text-2xl font-bold text-white">Dashboard</h1>
-            <p class="text-sm text-slate-400">
-                System overview and operational status
-            </p>
-        </div>
+        {{-- ========================================== --}}
+        {{-- COMMAND HEADER --}}
+        {{-- ========================================== --}}
 
-        <div id="top-alert-container">
-            @if(!empty($alerts))
-            @php
-            $first = $alerts[0];
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-4">
 
-            if (is_string($first)) {
-            $first = [
-            'level' => 'LOW',
-            'message' => $first,
-            'details' => ''
-            ];
-            }
+            {{-- LEFT SIDE --}}
+            <div class="xl:col-span-2">
 
-            $level = $first['level'] ?? 'LOW';
-            @endphp
+                <div class="rounded-2xl border border-cyan-500/10 bg-[#081225] p-6 h-full">
 
-            <div class="
-@if($level === 'HIGH') threat-high
-@elseif($level === 'MEDIUM') bg-yellow-500/10 text-yellow-400
-@else bg-blue-500/10 text-blue-400
-@endif">
+                    {{-- TITLE --}}
+                    <div class="mb-6">
 
-                <strong>{{ $level }}</strong> —
-                {{ $first['message'] ?? '' }}
-                {{ $first['details'] ?? '' }}
+                        <h1 class="text-4xl font-black tracking-wide text-white">
+                            Command Dashboard
+                        </h1>
 
-            </div>
-            @endif
-        </div>
+                        <p class="text-sm text-slate-400 mt-1 tracking-wide">
+                            System overview and operational intelligence status
+                        </p>
 
-        <div id="alert-container" class="space-y-3">
-            @forelse($alerts as $alert)
+                    </div>
 
-            @php
-            if (is_string($alert)) {
-            $alert = [
-            'level' => 'LOW',
-            'message' => $alert,
-            'details' => ''
-            ];
-            }
+                    {{-- THREAT PANEL --}}
+                    <div class="p-5 rounded-2xl border border-slate-700 bg-slate-900/70">
 
-            $level = $alert['level'] ?? 'LOW';
-            @endphp
+                        <div class="flex items-center justify-between">
 
-            <div class="border-l-4 pl-3
-            @if($level === 'HIGH') border-red-500
-            @elseif($level === 'MEDIUM') border-yellow-500
-            @else border-blue-500
-            @endif">
+                            <div>
 
-                <p class="text-sm font-semibold">
-                    {{ $alert['message'] ?? 'Unknown alert' }}
-                </p>
+                                <p class="text-sm text-gray-400">
+                                    Threat Level
+                                </p>
 
-                @if(!empty($alert['details']))
-                <p class="text-xs text-gray-400">
-                    {{ $alert['details'] }}
-                </p>
-                @endif
+                                @php
+                                $level = match(true) {
+                                $threatScore >= 70 => 'CRITICAL',
+                                $threatScore >= 40 => 'ELEVATED',
+                                $threatScore >= 20 => 'GUARDED',
+                                default => 'LOW'
+                                };
 
-            </div>
+                                $color = match($level) {
+                                'CRITICAL' => 'red',
+                                'ELEVATED' => 'yellow',
+                                'GUARDED' => 'blue',
+                                default => 'green'
+                                };
+                                @endphp
 
-            @empty
-            <p class="text-gray-400 text-sm">No active threats</p>
-            @endforelse
-        </div>
+                                <p class="text-4xl font-black tracking-widest text-{{ $color }}-400">
+                                    {{ $level }}
+                                </p>
 
-        <div class="mb-4 p-4 rounded-xl border border-slate-700 bg-slate-900">
-            <div class="flex items-center justify-between">
+                            </div>
 
-                <div>
-                    <p class="text-sm text-gray-400">Threat Level</p>
+                            <div class="text-right">
 
-                    @php
-                    $level = match(true) {
-                    $threatScore >= 70 => 'CRITICAL',
-                    $threatScore >= 40 => 'ELEVATED',
-                    $threatScore >= 20 => 'GUARDED',
-                    default => 'LOW'
-                    };
+                                <p class="text-sm text-gray-400">
+                                    Threat Score
+                                </p>
 
-                    $color = match($level) {
-                    'CRITICAL' => 'red',
-                    'ELEVATED' => 'yellow',
-                    'GUARDED' => 'blue',
-                    default => 'green'
-                    };
-                    @endphp
+                                <p class="text-5xl font-black text-white"
+                                    data-threat-score>
+                                    {{ $threatScore }}/100
+                                </p>
 
-                    <p class="text-xl font-bold text-{{ $color }}-400">
-                        {{ $level }}
-                    </p>
-                </div>
+                            </div>
 
-                <div class="text-right">
-                    <p class="text-sm text-gray-400">Score</p>
-                    <p class="text-2xl font-bold" data-threat-score>
-                        {{ $threatScore }}/100
-                    </p>
+                        </div>
+
+                        {{-- Progress --}}
+                        <div class="mt-5 w-full h-3 bg-slate-700 rounded-full overflow-hidden">
+
+                            <div class="h-3 rounded-full bg-{{ $color }}-500 transition-all duration-500"
+                                data-threat-bar
+                                style="width: {{ $threatScore }}%">
+                            </div>
+
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>
 
-            <!-- Progress Bar -->
-            <div class="mt-3 w-full bg-slate-700 rounded-full h-2">
-                <div class="h-2 rounded-full bg-{{ $color }}-500"
-                    data-threat-bar
-                    style="width: {{ $threatScore }}%"></div>
+            {{-- RIGHT SIDE --}}
+            <div>
+
+                <div class="relative overflow-hidden rounded-2xl border border-cyan-500/10 bg-[#081225] h-full min-h-[260px] flex items-center justify-center">
+
+                    {{-- Glow --}}
+                    <div class="absolute inset-0 bg-cyan-500/10 blur-3xl"></div>
+
+                    {{-- Rotating radar --}}
+                    <div class="absolute w-64 h-64 rounded-full border border-cyan-400/20 animate-spin-slow"></div>
+
+                    {{-- Logo --}}
+                    <img
+                        src="{{ asset('img/84.png') }}"
+                        alt="Intel Logo"
+                        class="relative w-52 drop-shadow-[0_0_30px_rgba(34,211,238,0.45)] z-10">
+
+                    {{-- Bottom Label --}}
+                    <div class="absolute bottom-4 text-center">
+
+                        <p class="text-cyan-400 text-xs tracking-[0.35em] uppercase">
+                            Intelligence Command Center
+                        </p>
+
+                    </div>
+
+                </div>
+
             </div>
+
         </div>
 
         <!-- STATUS CARDS -->
@@ -532,6 +532,21 @@
 
         .threat-high {
             animation: threat-blink 1s infinite;
+        }
+
+        @keyframes spin-slow {
+
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-spin-slow {
+            animation: spin-slow 18s linear infinite;
         }
     </style>
 

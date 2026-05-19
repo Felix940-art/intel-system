@@ -13,6 +13,31 @@
             </p>
         </div>
 
+        @if(session('success'))
+
+        <div class="mb-4 bg-green-500/10 border border-green-500/20 text-green-300 px-4 py-3 rounded-lg">
+            {{ session('success') }}
+        </div>
+
+        @endif
+
+        @if($errors->any())
+
+        <div class="mb-4 bg-red-500/10 border border-red-500/20 text-red-300 px-4 py-3 rounded-lg">
+
+            <ul class="list-disc ml-5 text-sm">
+
+                @foreach($errors->all() as $error)
+
+                <li>{{ $error }}</li>
+
+                @endforeach
+
+            </ul>
+
+        </div>
+
+        @endif
 
         <!-- UPDATE REPORT FORM -->
         <form method="POST"
@@ -34,7 +59,7 @@
 
                         <input type="date"
                             name="extraction_date"
-                            value="{{ $report->extraction_date }}"
+                            value="{{ \Carbon\Carbon::parse($report->extraction_date)->format('Y-m-d') }}"
                             class="mt-1 w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white">
                     </div>
 
@@ -153,8 +178,11 @@
                     </a>
 
                     <button type="submit"
+                        onclick="this.disabled=true; this.innerText='Updating...'; this.form.submit();"
                         class="px-5 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg">
+
                         Update Report
+
                     </button>
 
                 </div>
@@ -177,32 +205,56 @@
 
                 @foreach($report->documents as $doc)
 
-                <div class="flex items-center gap-4">
+                <div class="flex items-center justify-between bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3">
 
-                    <a href="{{ asset('storage/'.$doc->file_path) }}"
-                        target="_blank"
-                        class="text-cyan-400 hover:underline">
-                        Preview
-                    </a>
+                    <div class="flex items-center gap-3">
 
-                    <a href="{{ asset('storage/'.$doc->file_path) }}"
-                        download
-                        class="text-blue-400 hover:underline">
-                        Download
-                    </a>
+                        <div class="text-cyan-400 text-lg">
+                            📄
+                        </div>
 
-                    <form method="POST"
-                        action="{{ route('dforensics.document.delete',$doc->id) }}"
-                        onsubmit="return confirm('Delete this document?')">
+                        <div>
 
-                        @csrf
-                        @method('DELETE')
+                            <div class="text-white text-sm font-medium">
+                                {{ $doc->file_path }}
+                            </div>
 
-                        <button class="text-red-400 hover:underline">
-                            Delete
-                        </button>
+                            <div class="text-slate-500 text-xs">
+                                Uploaded Evidence File
+                            </div>
 
-                    </form>
+                        </div>
+
+                    </div>
+
+                    <div class="flex items-center gap-4">
+
+                        <a href="{{ asset('storage/'.$doc->file_path) }}"
+                            target="_blank"
+                            class="text-cyan-400 hover:underline text-sm">
+                            Preview
+                        </a>
+
+                        <a href="{{ asset('storage/'.$doc->file_path) }}"
+                            download
+                            class="text-blue-400 hover:underline text-sm">
+                            Download
+                        </a>
+
+                        <form method="POST"
+                            action="{{ route('dforensics.document.delete',$doc->id) }}"
+                            onsubmit="return confirm('Delete this document?')">
+
+                            @csrf
+                            @method('DELETE')
+
+                            <button class="text-red-400 hover:underline text-sm">
+                                Delete
+                            </button>
+
+                        </form>
+
+                    </div>
 
                 </div>
 

@@ -1097,6 +1097,42 @@ namespace  {
     class Pdf extends \Barryvdh\DomPDF\Facade\Pdf {}
     class Excel extends \Maatwebsite\Excel\Facades\Excel {}
     class QrCode extends \SimpleSoftwareIO\QrCode\Facades\QrCode {}
+
+    // Global Helper Functions for IDE Support
+    /**
+     * Get the auth instance
+     */
+    function auth(string $guard = null) {}
+    
+    /**
+     * Get the current time
+     */
+    function now(string $tz = null) {}
+    
+    /**
+     * Get today's date
+     */
+    function today(string $tz = null) {}
+    
+    /**
+     * Create a new redirect response
+     */
+    function redirect(string $to = null, int $status = 302, array $headers = [], bool $secure = null) {}
+    
+    /**
+     * Return a new response from the application
+     */
+    function response(string $content = '', int $status = 200, array $headers = []) {}
+    
+    /**
+     * Get an instance of the redirector
+     */
+    function back(int $status = 302, array $headers = [], mixed $fallback = false) {}
+    
+    /**
+     * Get the evaluated view contents of the given view
+     */
+    function view(string $view = null, array $data = [], array $mergeData = []) {}
 }
 
 

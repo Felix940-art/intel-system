@@ -11,58 +11,91 @@
             </p>
         </div>
 
-        <div class="flex flex-wrap items-center gap-3">
-            {{-- IMPORT EXCEL --}}
-            <form id="importForm"
-                action="{{ route('sigint.frequency.import') }}"
-                method="POST"
-                enctype="multipart/form-data"
-                class="flex items-center gap-2">
-                @csrf
-
-                <input type="file"
-                    name="file"
-                    id="importFile"
-                    class="hidden"
-                    accept=".xlsx,.xls,.csv"
-                    required>
-
-                <button type="button"
-                    onclick="document.getElementById('importFile').click()"
-                    class="cursor-pointer px-4 py-2 rounded-lg
-                   bg-slate-700 text-slate-200
-                   hover:bg-slate-600 transition text-sm">
-                    Choose File
-                </button>
-
-                <button type="button"
-                    id="importBtn"
-                    class="px-4 py-2 rounded-lg
-                   bg-emerald-600 text-white
-                   hover:bg-emerald-700 transition text-sm">
-                    Import Excel
-                </button>
-            </form>
-
-            {{-- DIVIDER --}}
-            <div class="max-w-7xl mx-auto py-8 space-y-8 animate-[fadeIn_.4s_ease-in-out]"></div>
+        <div class="flex items-center gap-3">
 
             {{-- ADD --}}
             <a href="{{ route('sigint.frequency.create') }}"
-                class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition text-sm">
-                + Add
+                class="group relative overflow-hidden
+                            px-5 py-2.5 rounded-2xl
+                            border border-emerald-400/30
+                            bg-gradient-to-br from-emerald-500/20 to-emerald-700/20
+                            hover:from-emerald-400/30 hover:to-emerald-600/30
+                            backdrop-blur-xl
+                            text-emerald-300 hover:text-white
+                            font-semibold text-sm tracking-wide
+                            transition-all duration-300
+                            shadow-lg shadow-emerald-900/20
+                            hover:shadow-emerald-500/30
+                            hover:-translate-y-0.5">
+
+                + New Signal Entry
             </a>
 
-            {{-- EXPORT EXCEL --}}
-            <a href="{{ route('sigint.frequency.export') }}"
-                class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition text-sm">
-                Export Excel
-            </a>
-            {{-- EXPORT PDF --}}
-            <a href="{{ route('sigint.frequency.export.pdf') }}"
-                class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition text-sm">
-                Export PDF
-            </a>
+            <div class="flex items-center gap-3">
+
+                {{-- EXPORT EXCEL --}}
+                <a href="#"
+                    id="exportIntelBtn"
+                    class="group relative overflow-hidden
+                            px-5 py-2.5 rounded-2xl
+                            border border-emerald-400/30
+                            bg-gradient-to-br from-emerald-500/20 to-emerald-700/20
+                            hover:from-emerald-400/30 hover:to-emerald-600/30
+                            backdrop-blur-xl
+                            text-emerald-300 hover:text-white
+                            font-semibold text-sm tracking-wide
+                            transition-all duration-300
+                            shadow-lg shadow-emerald-900/20
+                            hover:shadow-emerald-500/30
+                            hover:-translate-y-0.5">
+
+                    <div class="absolute inset-0 bg-white/5 opacity-0
+                                group-hover:opacity-100 transition duration-300">
+                    </div>
+
+                    <span class="relative flex items-center gap-2">
+
+                        📗
+
+                        Export Intel
+
+                    </span>
+
+                </a>
+
+
+                {{-- EXPORT PDF --}}
+                <a href="{{ route('sigint.frequency.export.pdf', request()->query()) }}"
+                    class="group relative overflow-hidden
+                            px-5 py-2.5 rounded-2xl
+                            border border-red-400/30
+                            bg-gradient-to-br from-red-500/20 to-red-700/20
+                            hover:from-red-400/30 hover:to-red-600/30
+                            backdrop-blur-xl
+                            text-red-300 hover:text-white
+                            font-semibold text-sm tracking-wide
+                            transition-all duration-300
+                            shadow-lg shadow-red-900/20
+                            hover:shadow-red-500/30
+                            hover:-translate-y-0.5">
+
+                    <div class="absolute inset-0
+            bg-white/5 opacity-0
+            group-hover:opacity-100
+            transition duration-300">
+                    </div>
+
+                    <span class="relative flex items-center gap-2">
+
+                        📕
+
+                        Generate Brief
+
+                    </span>
+
+                </a>
+
+            </div>
 
         </div>
     </div>
@@ -130,10 +163,18 @@
                         Reset
                     </a>
 
-                    <a href="{{ route('sigint.frequency.analytics') }}"
-                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-semibold flex items-center gap-2">
+                    <button
+                        type="button"
+                        id="analyticsBtn"
+                        class="px-4 py-2
+                        bg-indigo-600 hover:bg-indigo-500
+                        rounded-lg text-sm font-semibold
+                        flex items-center gap-2
+                        transition">
+
                         📊 Analytics
-                    </a>
+
+                    </button>
                 </div>
             </div>
         </form>
@@ -171,6 +212,17 @@
         <table class="w-full text-sm border-separate border-spacing-y-1">
             <thead class="bg-slate-800 text-slate-400 text-xs uppercase tracking-wider">
                 <tr>
+                    <th class="px-3 py-3 text-center w-10">
+
+                        <input
+                            type="checkbox"
+                            id="selectAllRows"
+                            class="rounded border-slate-600
+                            bg-slate-800 text-cyan-500
+                            focus:ring-cyan-500">
+
+                    </th>
+
                     <th class="px-4 py-3">Frequency</th>
                     <th class="px-3 py-3 text-center">Watchlist</th>
                     <th class="px-4 py-3">Date & Time</th>
@@ -196,10 +248,25 @@
                 $origin = $originParts ? implode(', ', $originParts) : '—';
                 @endphp
 
-                <tr class="border-b border-slate-800
-           hover:bg-slate-800/60
-           transition duration-200
-           hover:scale-[1.002]">
+                <tr
+                    class="frequency-row border-b border-slate-800
+                    hover:bg-slate-800/60
+                    transition duration-200
+                    hover:scale-[1.002]"
+                    data-id="{{ $f->id }}">
+
+                    <td class="px-3 py-3 text-center">
+
+                        <input
+                            type="checkbox"
+                            class="row-checkbox rounded
+                            border-slate-600
+                            bg-slate-800
+                            text-cyan-500
+                            focus:ring-cyan-500"
+                            value="{{ $f->id }}">
+
+                    </td>
 
                     {{-- Frequency --}}
                     <td class="px-4 py-3 font-semibold text-slate-100">
@@ -286,7 +353,7 @@
                         'SRMA EMPORIUM' => 'bg-yellow-500/10 text-yellow-300 border-yellow-500/30',
                         'SRMA ARCTIC' => 'bg-teal-500/10 text-teal-300 border-teal-500/30',
                         'SRMA BROWSER' => 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30',
-                        'SRMA SESAME' => 'bg-purple-500/10 text-purple-300border-purple-500/30',
+                        'SRMA SESAME' => 'bg-purple-500/10 text-purple-300 border-purple-500/30',
                         'SRMA LEVOX' => 'bg-pink-500/10 text-pink-300 border-pink-500/30',
                         'COMTECH' => 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30',
                         'EV MRGU' => 'bg-red-500/10 text-red-300 border-red-500/30',
@@ -321,37 +388,7 @@
 
                 </tr>
 
-                <tr x-show="openRow === {{ $f->id }}" x-transition>
-                    <td colspan="10" class="bg-slate-800 p-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-300">
-
-                            {{-- Conversation --}}
-                            <div>
-                                <p class="font-semibold text-slate-100 mb-1">Intercepted Conversation</p>
-                                <p class="whitespace-pre-wrap">
-                                    {{ $f->conversation ?? '—' }}
-                                </p>
-                            </div>
-
-                            {{-- Intel Summary --}}
-                            <div class="space-y-1">
-                                <p><strong>Frequency:</strong> {{ $f->frequency }}</p>
-                                <p><strong>Date/Time:</strong> {{ $f->datetime_code }}</p>
-                                <p><strong>LOB:</strong> {{ $f->lob }}</p>
-                                <p><strong>Origin:</strong> {{ $origin }}</p>
-                                <p><strong>Threat Level:</strong>
-                                    <span class="px-2 py-1 text-xs rounded
-                        @if($f->threat_level === 'High') bg-red-600/20 text-red-400
-                        @elseif($f->threat_level === 'Medium') bg-yellow-600/20 text-yellow-400
-                        @else bg-green-600/20 text-green-400 @endif">
-                                        {{ $f->threat_level ?? 'Low' }}
-                                    </span>
-                                </p>
-                            </div>
-
-
-
-                            <!-- Collapsible Panel -->
+                <!-- Collapsible Panel -->
                 <tr id="preview-{{ $f->id }}" class="hidden">
                     <td colspan="11" class="px-6 py-0">
                         <div
@@ -450,18 +487,13 @@
                         </div>
                     </td>
                 </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-    </div>
-    </td>
-    </tr>
-
-    @endforeach
-    </tbody>
-    </table>
-
-    <div class="p-4">
-        {{ $frequencies->links() }}
-    </div>
+        <div class="p-4">
+            {{ $frequencies->links() }}
+        </div>
 
     </div>
 
@@ -496,6 +528,119 @@
         }
     </style>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /*
+            |--------------------------------------------------------------------------
+            | SELECT ALL
+            |--------------------------------------------------------------------------
+            */
+
+            const selectAll =
+                document.getElementById('selectAllRows');
+
+            const rowCheckboxes =
+                document.querySelectorAll('.row-checkbox');
+
+            selectAll?.addEventListener('change', function() {
+
+                rowCheckboxes.forEach(cb => {
+
+                    cb.checked = this.checked;
+
+                });
+
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | ANALYTICS
+            |--------------------------------------------------------------------------
+            */
+
+            const analyticsBtn =
+                document.getElementById('analyticsBtn');
+
+            analyticsBtn?.addEventListener('click', () => {
+
+                let selected = [];
+
+                /*
+                |--------------------------------------------------------------------------
+                | PRIORITY:
+                | SELECTED ROWS
+                |--------------------------------------------------------------------------
+                */
+
+                document.querySelectorAll('.row-checkbox:checked')
+                    .forEach(cb => {
+
+                        selected.push(cb.value);
+
+                    });
+
+                /*
+                |--------------------------------------------------------------------------
+                | IF NONE SELECTED:
+                | ANALYZE VISIBLE FILTERED ROWS
+                |--------------------------------------------------------------------------
+                */
+
+                if (selected.length === 0) {
+
+                    document.querySelectorAll('.frequency-row')
+                        .forEach(row => {
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | CHECK IF ROW IS VISIBLE
+                            |--------------------------------------------------------------------------
+                            */
+
+                            if (row.offsetParent !== null) {
+
+                                selected.push(row.dataset.id);
+
+                            }
+
+                        });
+
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | VALIDATION
+                |--------------------------------------------------------------------------
+                */
+
+                if (selected.length === 0) {
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'No Records',
+                        text: 'No frequency records available for analysis.'
+                    });
+
+                    return;
+
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | REDIRECT
+                |--------------------------------------------------------------------------
+                */
+
+                const ids = selected.join(',');
+
+                window.location.href =
+                    `/sigint/frequency/analytics?ids=${ids}`;
+
+            });
+
+        });
+    </script>
 
 </x-app-layout>
 
@@ -755,3 +900,95 @@
     });
 </script>
 @endif
+
+<script>
+    document.getElementById('analyticsBtn').addEventListener('click', function() {
+
+        const checked = document.querySelectorAll('.row-checkbox:checked');
+
+        let url = "{{ route('sigint.frequency.analytics') }}";
+
+        if (checked.length > 0) {
+
+            const ids = Array.from(checked).map(cb => cb.value);
+
+            url += '?ids=' + ids.join(',');
+
+        } else {
+
+            const params = new URLSearchParams(window.location.search);
+
+            url += '?' + params.toString();
+        }
+
+        window.location.href = url;
+    });
+</script>
+
+<script>
+    document.getElementById('exportIntelBtn')
+        .addEventListener('click', function(e) {
+
+            e.preventDefault();
+
+            let selected = [];
+
+            /*
+            =========================================
+            GET SELECTED ROWS
+            =========================================
+            */
+
+            document.querySelectorAll('.row-checkbox:checked')
+                .forEach(cb => {
+
+                    selected.push(cb.value);
+
+                });
+
+            /*
+            =========================================
+            BASE EXPORT URL
+            =========================================
+            */
+
+            let url =
+                "{{ route('sigint.frequency.export') }}";
+
+            /*
+            =========================================
+            IF ROWS ARE SELECTED
+            =========================================
+            */
+
+            if (selected.length > 0) {
+
+                url += '?ids=' + selected.join(',');
+
+            } else {
+
+                /*
+                =========================================
+                EXPORT CURRENT FILTERS
+                =========================================
+                */
+
+                const params =
+                    new URLSearchParams(window.location.search);
+
+                if (params.toString()) {
+
+                    url += '?' + params.toString();
+                }
+            }
+
+            /*
+            =========================================
+            REDIRECT
+            =========================================
+            */
+
+            window.location.href = url;
+
+        });
+</script>
