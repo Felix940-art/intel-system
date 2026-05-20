@@ -559,85 +559,7 @@
             |--------------------------------------------------------------------------
             */
 
-            const analyticsBtn =
-                document.getElementById('analyticsBtn');
 
-            analyticsBtn?.addEventListener('click', () => {
-
-                let selected = [];
-
-                /*
-                |--------------------------------------------------------------------------
-                | PRIORITY:
-                | SELECTED ROWS
-                |--------------------------------------------------------------------------
-                */
-
-                document.querySelectorAll('.row-checkbox:checked')
-                    .forEach(cb => {
-
-                        selected.push(cb.value);
-
-                    });
-
-                /*
-                |--------------------------------------------------------------------------
-                | IF NONE SELECTED:
-                | ANALYZE VISIBLE FILTERED ROWS
-                |--------------------------------------------------------------------------
-                */
-
-                if (selected.length === 0) {
-
-                    document.querySelectorAll('.frequency-row')
-                        .forEach(row => {
-
-                            /*
-                            |--------------------------------------------------------------------------
-                            | CHECK IF ROW IS VISIBLE
-                            |--------------------------------------------------------------------------
-                            */
-
-                            if (row.offsetParent !== null) {
-
-                                selected.push(row.dataset.id);
-
-                            }
-
-                        });
-
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | VALIDATION
-                |--------------------------------------------------------------------------
-                */
-
-                if (selected.length === 0) {
-
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'No Records',
-                        text: 'No frequency records available for analysis.'
-                    });
-
-                    return;
-
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | REDIRECT
-                |--------------------------------------------------------------------------
-                */
-
-                const ids = selected.join(',');
-
-                window.location.href =
-                    `/sigint/frequency/analytics?ids=${ids}`;
-
-            });
 
         });
     </script>
@@ -904,24 +826,41 @@
 <script>
     document.getElementById('analyticsBtn').addEventListener('click', function() {
 
-        const checked = document.querySelectorAll('.row-checkbox:checked');
+        // GET CURRENT URL FILTERS
+        const params = new URLSearchParams(window.location.search);
 
-        let url = "{{ route('sigint.frequency.analytics') }}";
+        // GET CHECKED ROWS
+        const selected = Array.from(document.querySelectorAll('.row-checkbox:checked'))
+            .map(cb => cb.value);
 
-        if (checked.length > 0) {
+        /*
+        |--------------------------------------------------------------------------
+        | ANALYTICS MODE
+        |--------------------------------------------------------------------------
+        |
+        | IF ROWS ARE SELECTED:
+        | -> analyze only selected rows
+        |
+        | IF NO ROWS SELECTED:
+        | -> analyze ALL filtered records
+        |
+        */
 
-            const ids = Array.from(checked).map(cb => cb.value);
+        if (selected.length > 0) {
 
-            url += '?ids=' + ids.join(',');
+            params.set('ids', selected.join(','));
 
         } else {
 
-            const params = new URLSearchParams(window.location.search);
+            // VERY IMPORTANT
+            // REMOVE IDS COMPLETELY
+            // so controller analyzes ALL FILTERED DATA
 
-            url += '?' + params.toString();
+            params.delete('ids');
         }
 
-        window.location.href = url;
+        window.location.href =
+            "{{ route('sigint.frequency.analytics') }}?" + params.toString();
     });
 </script>
 

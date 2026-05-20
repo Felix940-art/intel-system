@@ -592,16 +592,25 @@ class FrequencyController extends Controller
             $surgeColor = 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
         }
 
-        // CURRENT MONTH THREAT ACTIVITY
-        $currentThreats = (clone $query)->selectRaw('        threat_confronted,        COUNT(*) as total    ')
-            ->whereMonth('created_at', now()->month)
+        $currentMonth = now()->format('F');
+        $previousMonth = now()->subMonth()->format('F');
+
+        $currentThreats = (clone $query)
+            ->selectRaw('
+        threat_confronted,
+        COUNT(*) as total
+    ')
+            ->where('datetime_code', 'LIKE', "%{$currentMonth}%")
             ->whereNotNull('threat_confronted')
             ->groupBy('threat_confronted')
             ->pluck('total', 'threat_confronted');
 
-        // PREVIOUS MONTH THREAT ACTIVITY
-        $previousThreats = (clone $query)->selectRaw('        threat_confronted,        COUNT(*) as total    ')
-            ->whereMonth('created_at', now()->subMonth()->month)
+        $previousThreats = (clone $query)
+            ->selectRaw('
+        threat_confronted,
+        COUNT(*) as total
+    ')
+            ->where('datetime_code', 'LIKE', "%{$previousMonth}%")
             ->whereNotNull('threat_confronted')
             ->groupBy('threat_confronted')
             ->pluck('total', 'threat_confronted');
@@ -612,16 +621,21 @@ class FrequencyController extends Controller
             $previous = $previousThreats[$threat] ?? 0;
 
             // PERCENT CHANGE
-            if ($previous == 0) {
-                $change = 100;
+            if ($previous == 0 && $count > 0) {
+
+                $change = 999;
+            } elseif ($previous == 0) {
+
+                $change = 0;
             } else {
+
                 $change = round((($count - $previous) / $previous) * 100);
             }
 
             // STATUS
-            if ($change >= 100) {
+            if ($change >= 999) {
 
-                $status = 'CRITICAL RISE';
+                $status = 'NEW THREAT EMERGENCE';
                 $color = 'bg-red-500/20 text-red-400 border-red-500/30';
                 $icon = '↑';
             } elseif ($change >= 50) {
@@ -654,7 +668,10 @@ class FrequencyController extends Controller
                 'color' => $color,
                 'icon' => $icon,
             ];
-        })->sortByDesc('change');
+        })->sortByDesc(function ($item) {
+
+            return ($item['count'] * 10) + $item['change'];
+        });
 
         // REAL-TIME INTELLIGENCE FEED
         $intelFeed = collect();
@@ -1218,17 +1235,30 @@ class FrequencyController extends Controller
                 'threat_confronted'
             ]);
 
-        $hourlyActivity = (clone $query)->selectRaw("
-    HOUR(created_at) as hour,
-    COUNT(*) as total
-")
-            ->groupBy('hour')
-            ->orderBy('hour')
+        $hourlyActivity = (clone $query)
             ->get()
+            ->map(function ($record) {
 
-            ->map(function ($item) {
+                /*
+        |--------------------------------------------------------------------------
+        | EXPECTED FORMAT
+        |--------------------------------------------------------------------------
+        | 080900 March 2026
+        | DDHHMM
+        |--------------------------------------------------------------------------
+        */
 
-                $count = $item->total;
+                preg_match('/^(\d{2})(\d{2})(\d{2})/', trim($record->datetime_code), $matches);
+
+                if (!$matches) {
+                    return null;
+                }
+
+                return $matches[2]; // HOUR
+            })
+            ->filter()
+            ->countBy()
+            ->map(function ($count, $hour) {
 
                 if ($count >= 10) {
 
@@ -1250,7 +1280,7 @@ class FrequencyController extends Controller
 
                 return [
 
-                    'hour' => str_pad($item->hour, 2, '0', STR_PAD_LEFT) . ':00H',
+                    'hour' => str_pad($hour, 2, '0', STR_PAD_LEFT) . ':00H',
 
                     'count' => $count,
 
@@ -1258,7 +1288,9 @@ class FrequencyController extends Controller
 
                     'color' => $color,
                 ];
-            });
+            })
+            ->sortBy('hour')
+            ->values();
 
         return view('sigint.frequency.analytics', compact(
             'monthly',
@@ -1292,7 +1324,11 @@ class FrequencyController extends Controller
             'threatEntityList',
             'activeNodeList',
             'watchlistSignals',
-            'hourlyActivity'
+            'hourlyActivity',
+            'currentMonth',
+            'previousMonth',
+            'currentThreats',
+            'previousThreats'
         ));
     }
 
