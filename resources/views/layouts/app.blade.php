@@ -174,6 +174,13 @@
                             <span class="icon">🧭</span>
                             <span class="label">SRE System</span>
                         </a>
+
+                        <a href="{{ route('sigint.bts.index') }}"
+                            class="sidebar-item text-sm pl-6"
+                            data-label="BTS Database">
+                            <span class="icon">📡</span>
+                            <span class="label">BTS Database</span>
+                        </a>
                     </div>
                 </div>
 
@@ -269,6 +276,105 @@
             }
         });
     </script>
+
+    <!-- Cyber Toast Notification -->
+    @if(session('success') || session('error'))
+
+    <div id="toast"
+        class="fixed bottom-8 right-8 z-[9999]
+     transform translate-x-[120%]
+     transition-all duration-500">
+
+        <div class="
+        min-w-[350px]
+        rounded-2xl
+        p-5
+        backdrop-blur-xl
+        border
+        shadow-2xl
+
+        @if(session('success'))
+            bg-green-900/30 border-green-500/40
+            shadow-green-500/30
+        @endif
+
+        @if(session('error'))
+            bg-red-900/30 border-red-500/40
+            shadow-red-500/30
+        @endif
+    ">
+
+            <!-- Header -->
+            <div class="flex items-start justify-between">
+
+                <div class="flex gap-3">
+
+                    <div class="text-2xl">
+                        @if(session('success'))
+                        ✅
+                        @endif
+
+                        @if(session('error'))
+                        ⚠️
+                        @endif
+                    </div>
+
+                    <div>
+                        <h3 class="text-white font-bold text-lg">
+
+                            @if(session('success'))
+                            Success
+                            @endif
+
+                            @if(session('error'))
+                            Error
+                            @endif
+
+                        </h3>
+
+                        <p class="text-slate-300 text-sm mt-1">
+                            {{ session('success') ?? session('error') }}
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <!-- Close Button -->
+                <button onclick="closeToast()"
+                    class="text-slate-400 hover:text-white">
+
+                    ✕
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        const toast = document.getElementById('toast');
+
+        // Slide in
+        setTimeout(() => {
+            toast.classList.remove('translate-x-[120%]');
+        }, 100);
+
+
+        // Auto hide after 4 seconds
+        setTimeout(() => {
+            closeToast();
+        }, 4000);
+
+
+        function closeToast() {
+            toast.classList.add('translate-x-[120%]');
+        }
+    </script>
+
+    @endif
 
 </body>
 

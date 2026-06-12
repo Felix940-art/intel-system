@@ -68,9 +68,13 @@ class SreEntryController extends Controller
             'imsi' => $validated['imsi'] ?? null,
             'lac' => $validated['lac'] ?? null,
             'cid' => $validated['cid'] ?? null,
+
+            'code_name' => $validated['code_name'] ?? null,
+            'threat_group' => $validated['threat_group'] ?? null,
+
             'bts_location' => $validated['bts_location'] ?? null,
-            'bts_lat'      => $validated['bts_lat'] ?? null,
-            'bts_lng'      => $validated['bts_lng'] ?? null,
+            'bts_lat' => $validated['bts_lat'] ?? null,
+            'bts_lng' => $validated['bts_lng'] ?? null,
         ]);
 
         return redirect()
@@ -103,11 +107,6 @@ class SreEntryController extends Controller
         // Update selector
         $event->selector->update([
             'selector_value' => $validated['selector'],
-            'threat_group'   => $validated['threat_group'] ?? null,
-            'code_name'      => $validated['code_name'] ?? null,
-            'bts_location' => $validated['bts_location'] ?? null,
-            'bts_lat'      => $validated['bts_lat'] ?? null,
-            'bts_lng'      => $validated['bts_lng'] ?? null,
         ]);
 
         // Update event
@@ -117,6 +116,13 @@ class SreEntryController extends Controller
             'imsi'        => $validated['imsi'] ?? null,
             'lac'         => $validated['lac'] ?? null,
             'cid'         => $validated['cid'] ?? null,
+
+            'code_name'   => $validated['code_name'] ?? null,
+            'threat_group' => $validated['threat_group'] ?? null,
+
+            'bts_location' => $validated['bts_location'] ?? null,
+            'bts_lat'     => $validated['bts_lat'] ?? null,
+            'bts_lng'     => $validated['bts_lng'] ?? null,
         ]);
 
         return redirect()

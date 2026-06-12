@@ -14,6 +14,8 @@ class SreEvent extends Model
         'imsi',
         'lac',
         'cid',
+        'code_name',
+        'threat_group',
         'bts_location',
         'bts_lat',
         'bts_lng'

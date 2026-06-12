@@ -89,7 +89,7 @@
 
                         📕
 
-                        Generate Brief
+                        Generate PDF
 
                     </span>
 

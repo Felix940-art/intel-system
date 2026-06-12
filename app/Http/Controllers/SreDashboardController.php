@@ -10,22 +10,26 @@ class SreDashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $query = SreEvent::with('selector');
+        $query = SreEvent::select('sre_events.*')
+            ->with('selector');
 
         // SEARCH
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = trim($request->search);
 
             $query->where(function ($q) use ($search) {
-                $q->where('imei', 'like', "%$search%")
-                    ->orWhere('imsi', 'like', "%$search%")
+                $q->where('imei', 'like', "%{$search}%")
+                    ->orWhere('imsi', 'like', "%{$search}%")
+                    ->orWhere('lac', 'like', "%{$search}%")
+                    ->orWhere('cid', 'like', "%{$search}%")
+                    ->orWhere('code_name', 'like', "%{$search}%")
+                    ->orWhere('threat_group', 'like', "%{$search}%")
                     ->orWhereHas('selector', function ($sq) use ($search) {
-                        $sq->where('selector_value', 'like', "%$search%")
-                            ->orWhere('code_name', 'like', "%$search%");
+                        $sq->where('selector_value', 'like', "%{$search}%")
+                            ->orWhere('code_name', 'like', "%{$search}%");
                     });
             });
         }
-
         // THREAT FILTER
         if ($request->filled('threat')) {
             $query->whereHas('selector', function ($q) use ($request) {
@@ -39,7 +43,7 @@ class SreDashboardController extends Controller
         }
 
         $events = $query
-            ->orderBy('observed_at', 'desc')
+            ->latest('updated_at')
             ->paginate(10);
 
         return view('sigint.sre.dashboard', [

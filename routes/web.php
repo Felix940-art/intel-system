@@ -12,6 +12,10 @@ use App\Http\Controllers\GeoIntController;
 use App\Http\Controllers\DForensicsController;
 use App\Http\Controllers\AuditLogController;
 use App\Models\ActivityLog;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use App\Http\Controllers\SreExportController;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Http\Controllers\BtsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -164,15 +168,58 @@ Route::middleware(['auth'])->group(function () {
 
             Route::delete('/{event}', [SreEntryController::class, 'destroy'])->name('destroy');
 
-            Route::post('/import', [SreEntryController::class, 'import'])->name('import');
+            Route::get('/export/excel', [SreExportController::class, 'excel'])->name('export.excel');
 
-            Route::get('/export', [SreEntryController::class, 'export'])->name('export');
-
-            Route::get('/export/pdf', [SreEntryController::class, 'exportPdf'])->name('export.pdf');
+            Route::get('/export/pdf', [SreExportController::class, 'pdf'])->name('export.pdf');
         });
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | SIGINT - BTS DATABASE
+    |--------------------------------------------------------------------------
+    */
 
+    Route::prefix('sigint/bts')
+        ->name('sigint.bts.')
+        ->group(function () {
+
+            Route::get('/', [BtsController::class, 'index'])
+                ->name('index');
+
+            Route::get('/create', [BtsController::class, 'create'])
+                ->name('create');
+
+            Route::post('/', [BtsController::class, 'store'])
+                ->name('store');
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | BTS Excel Export
+        |--------------------------------------------------------------------------
+        */
+            Route::get('/export/excel', [BtsController::class, 'export'])
+                ->name('export.excel');
+
+            /*
+        |--------------------------------------------------------------------------
+        | BTS PDF Export
+        |--------------------------------------------------------------------------
+        */
+            Route::get('/export/pdf', [BtsController::class, 'pdf'])
+                ->name('export.pdf');
+
+
+            Route::get('/{bts}/edit', [BtsController::class, 'edit'])
+                ->name('edit');
+
+            Route::put('/{bts}', [BtsController::class, 'update'])
+                ->name('update');
+
+            Route::delete('/{bts}', [BtsController::class, 'destroy'])
+                ->name('destroy');
+        });
     /*
     |--------------------------------------------------------------------------
     | GEOINT MODULE
@@ -238,7 +285,6 @@ Route::middleware(['auth'])->group(function () {
         });
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | AUTH ROUTES
@@ -246,3 +292,7 @@ Route::middleware(['auth'])->group(function () {
 */
 
 require __DIR__ . '/auth.php';
+
+Route::get('/test-time', function () {
+    return now()->format('F d, Y h:i:s A');
+});

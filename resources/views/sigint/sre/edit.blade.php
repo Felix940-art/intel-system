@@ -144,7 +144,7 @@
 
                     @foreach($threats as $threat)
                     <option value="{{ $threat }}"
-                        {{ old('threat_group', $event->selector->threat_group) === $threat ? 'selected' : '' }}>
+                        {{ old('threat_group', $event->threat_group) === $threat ? 'selected' : '' }}>
                         {{ $threat }}
                     </option>
                     @endforeach
@@ -161,7 +161,7 @@
                 <label class="label-dark">Code Name</label>
                 <input type="text"
                     name="code_name"
-                    value="{{ old('code_name', $event->selector->code_name ?? '') }}"
+                    value="{{ old('code_name', $event->code_name) }}"
                     placeholder="Enter code name (optional)"
                     class="input-dark @error('code_name') ring-2 ring-red-500 @enderror">
 

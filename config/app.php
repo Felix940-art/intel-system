@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => env('APP_TIMEZONE', 'Asia/Manila'),
 
     /*
     |--------------------------------------------------------------------------
@@ -124,12 +124,12 @@ return [
     ],
 
     'aliases' => [
-    'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
-],
+        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
+    ],
 
-'aliases' => [
-    'Str' => Illuminate\Support\Str::class,
-],
+    'aliases' => [
+        'Str' => Illuminate\Support\Str::class,
+    ],
 
 
 ];

@@ -99,86 +99,59 @@
         {{-- RIGHT ACTIONS --}}
         <div class="flex flex-wrap items-center gap-3">
 
-            {{-- IMPORT --}}
-            <form id="sreImportForm"
-                action="{{ route('sigint.sre.import') }}"
-                method="POST"
-                enctype="multipart/form-data"
-                class="flex items-center gap-2">
-                @csrf
+            {{-- EXPORT --}}
+            <a href="{{ route('sigint.sre.export.excel', request()->query()) }}"
+                class="group relative overflow-hidden
+                            px-5 py-2.5 rounded-2xl
+                            border border-emerald-400/30
+                            bg-gradient-to-br from-emerald-500/20 to-emerald-700/20
+                            hover:from-emerald-400/30 hover:to-emerald-600/30
+                            backdrop-blur-xl
+                            text-emerald-300 hover:text-white
+                            font-semibold text-sm tracking-wide
+                            transition-all duration-300
+                            shadow-lg shadow-emerald-900/20
+                            hover:shadow-emerald-500/30
+                            hover:-translate-y-0.5">
 
-                <input type="file"
-                    name="file"
-                    id="sreImportFile"
-                    class="hidden"
-                    accept=".xlsx,.xls,.csv"
-                    required>
+                <div class="absolute inset-0 bg-white/5 opacity-0
+                                group-hover:opacity-100 transition duration-300">
+                </div>
 
-                <button type="button"
-                    onclick="document.getElementById('sreImportFile').click()"
-                    class="h-11 px-5 inline-flex items-center justify-center gap-2
-                                rounded-xl
-                                bg-slate-700 hover:bg-slate-600
-                                text-slate-200 text-sm font-medium
-                                shadow-md shadow-slate-800/40
-                                hover:shadow-slate-600/40
-                                transition-all duration-200">
-                    Choose File
-                </button>
+                <span class="relative flex items-center gap-2">
+                    📗 Export Excel
+                </span>
+
+            </a>
 
 
-                <button type="submit"
-                    id="sreImportBtn"
-                    class="h-11 px-5 inline-flex items-center justify-center gap-2
-                                rounded-xl
-                                bg-emerald-600 hover:bg-emerald-500
-                                text-white text-sm font-medium
-                                shadow-lg shadow-emerald-600/20
-                                hover:shadow-emerald-500/40
-                                transition-all duration-200">
+            <a href="{{ route('sigint.sre.export.pdf', request()->query()) }}"
+                class="group relative overflow-hidden
+                            px-5 py-2.5 rounded-2xl
+                            border border-red-400/30
+                            bg-gradient-to-br from-red-500/20 to-red-700/20
+                            hover:from-red-400/30 hover:to-red-600/30
+                            backdrop-blur-xl
+                            text-red-300 hover:text-white
+                            font-semibold text-sm tracking-wide
+                            transition-all duration-300
+                            shadow-lg shadow-red-900/20
+                            hover:shadow-red-500/30
+                            hover:-translate-y-0.5">
 
-                    <span id="sreImportText">Import Excel</span>
+                <div class="absolute inset-0 bg-white/5 opacity-0
+                                group-hover:opacity-100 transition duration-300">
+                </div>
 
-                    <svg id="sreImportSpinner"
-                        class="hidden animate-spin w-4 h-4"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24">
-                        <circle class="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            stroke-width="4"></circle>
-                        <path class="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8v4l3-3-3-3v4a12 12 0 00-12 12h4z">
-                        </path>
-                    </svg>
-                </button>
+                <span class="relative flex items-center gap-2">
 
+                    📕
 
-                {{-- EXPORT --}}
-                <a href="{{ route('sigint.sre.export') }}"
-                    class="h-11 px-5 inline-flex items-center justify-center gap-2
-                                rounded-xl
-                                bg-green-600 hover:bg-green-500
-                                text-white text-sm font-medium
-                                shadow-lg shadow-green-600/20
-                                hover:shadow-green-500/40
-                                transition-all duration-200">
-                    Export Excel
-                </a>
+                    Generate PDF
 
+                </span>
+            </a>
 
-                <a href="{{ route('sigint.sre.export.pdf') }}"
-                    class="h-11 px-5 inline-flex items-center justify-center
-                                rounded-xl
-                                bg-red-600 hover:bg-red-700
-                                text-white text-sm font-medium transition">
-                    Export PDF
-                </a>
-            </form>
         </div>
     </div>
 
@@ -344,7 +317,7 @@
                 @forelse($events as $event)
 
                 @php
-                $threat = $event->selector->threat_group ?? 'UNKNOWN';
+                $threat = $event->threat_group ?? 'UNKNOWN';
 
                 $threatColors = [
                 'SRC' => 'bg-blue-500/10 text-blue-300 border-blue-500/30',
@@ -370,17 +343,17 @@
                                 transition duration-300
                                 hover:scale-[1.01]
                                 hover:shadow-lg
-                                {{ $event->description === 'UNKNOWN' ? '' : 'hover:shadow-red-500/20' }}">
+                                {{ $event->threat_group === 'UNKNOWN' ? '' : 'hover:shadow-red-500/20' }}">
 
                     <td class="px-5 py-4 text-slate-300">
-                        {{ optional($event->created_at)->format('d M Y H:i') ?? '—' }}
+                        {{ optional($event->observed_at)->format('d M Y H:i') ?? '—' }}
                     </td>
 
                     <td class="px-5 py-4 text-center">
-                        @if($event->selector->code_name)
+                        @if($event->code_name)
                         <span class="px-3 py-1 text-xs rounded-full
                                 bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
-                            {{ $event->selector->code_name ?? '—' }}
+                            {{ $event->code_name }}
                         </span>
                         @else
                         —
@@ -409,9 +382,9 @@
                         @endif
                     </td>
                     <td class="px-5 py-4 text-center">
-                        @if($event->selector && $event->selector->threat_group)
+                        @if($event->selector && $event->threat_group)
                         <span class="px-3 py-1 text-xs rounded-full border {{ $threatStyle }}">
-                            {{ $event->selector->threat_group }}
+                            {{ $event->threat_group }}
                         </span>
                         @else
                         —
