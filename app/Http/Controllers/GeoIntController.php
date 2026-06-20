@@ -30,7 +30,8 @@ class GeoIntController extends Controller
 
         $geointRecords = $query
             ->orderByDesc('mission_datetime')
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         $stats = [
             'total' => GeoInt::count(),

@@ -58,6 +58,10 @@ class SigintCopController extends Controller
 
         $frequencies = Frequency::all();
 
+        $timelineEvents = SreEvent::latest('observed_at')
+            ->take(20)
+            ->get();
+
         $frequencyLobs = [];
 
         foreach ($frequencies as $freq) {
@@ -85,6 +89,7 @@ class SigintCopController extends Controller
         return view('sigint.cop.index', [
             'btsMarkers' => $btsMarkers,
             'frequencyLobs' => $frequencyLobs,
+            'timelineEvents' => $timelineEvents,
         ]);
     }
 }

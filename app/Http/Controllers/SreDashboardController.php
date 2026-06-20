@@ -44,7 +44,8 @@ class SreDashboardController extends Controller
 
         $events = $query
             ->latest('updated_at')
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return view('sigint.sre.dashboard', [
             'events' => $events,

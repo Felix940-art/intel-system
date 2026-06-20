@@ -196,6 +196,29 @@ margin-bottom:20px;
 
         </div>
 
+        <div id="targetIntelPanel"
+            style="
+        display:none;
+        margin-bottom:20px;
+        background:#09162e;
+        border:1px solid #1e3a5f;
+        border-radius:12px;
+        padding:20px;
+        color:white;
+     ">
+
+            <div style="
+        font-size:20px;
+        font-weight:bold;
+        color:#22d3ee;
+        margin-bottom:15px;">
+                TARGET INTELLIGENCE PANEL
+            </div>
+
+            <div id="targetIntelContent"></div>
+
+        </div>
+
         <!-- MAP -->
         <div id="map"></div>
 
@@ -278,14 +301,14 @@ margin-bottom:20px;
 
         rankedTowers.forEach((tower, index) => {
 
-            let threatColor = 'text-green-400';
+            let threatColor = '#22c55e';
 
             if (tower.threat_level === 'HIGH') {
-                threatColor = 'text-red-400';
+                threatColor = '#ef4444';
             }
 
             if (tower.threat_level === 'MEDIUM') {
-                threatColor = 'text-yellow-400';
+                threatColor = '#f59e0b';
             }
 
             rankingHtml += `
@@ -299,7 +322,7 @@ margin-bottom:20px;
         Targets: ${tower.target_count}
     </div>
 
-    <div class="${threatColor} font-semibold text-sm">
+    <div style="color:${threatColor};font-weight:bold;font-size:13px;">
         ${tower.threat_level}
     </div>
 
@@ -710,6 +733,90 @@ gap:12px;
 
         buildOperationalTimeline();
 
+        function showTargetIntel(site) {
+            const panel =
+                document.getElementById(
+                    'targetIntelPanel'
+                );
+
+            const content =
+                document.getElementById(
+                    'targetIntelContent'
+                );
+
+            if (site.targets.length === 0) {
+                content.innerHTML =
+                    `
+            <div style="color:#94a3b8;">
+                No connected selectors detected.
+            </div>
+        `;
+
+                panel.style.display = 'block';
+
+                return;
+            }
+
+            let html = '';
+
+            site.targets.forEach(target => {
+                html += `
+            <div style="
+                background:#1e293b;
+                padding:15px;
+                border-radius:10px;
+                margin-bottom:10px;
+            ">
+
+                <div style="
+                    color:#22d3ee;
+                    font-size:18px;
+                    font-weight:bold;
+                ">
+                    ${target.code_name || 'UNKNOWN'}
+                </div>
+
+                <div>
+                   Threat Group:
+<b style="
+color:
+${target.threat_group?.includes('SRMA')
+    ? '#ef4444'
+    : '#22c55e'};
+">
+${target.threat_group || 'N/A'}
+</b>
+                </div>
+
+                <div>
+                    IMEI:
+                    ${target.imei || 'N/A'}
+                </div>
+
+                <div>
+                    IMSI:
+                    ${target.imsi || 'N/A'}
+                </div>
+
+                <div>
+                    BTS:
+                    ${site.name}
+                </div>
+
+                <div>
+                    Network:
+                    ${site.network}
+                </div>
+
+            </div>
+        `;
+            });
+
+            content.innerHTML = html;
+
+            panel.style.display = 'block';
+        }
+
         btsMarkers.forEach(site => {
             const point = mgrs.toPoint(site.mgrs);
 
@@ -843,6 +950,15 @@ Investigate
             marker.on('click', function() {
 
                 showIntelTargets(site);
+
+                showTargetIntel(site);
+
+                document
+                    .getElementById('targetIntelPanel')
+                    .scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
 
             });
 
