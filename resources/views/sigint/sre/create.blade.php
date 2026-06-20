@@ -121,7 +121,7 @@
                         value="{{ old('bts_lat') }}"
                         placeholder="11.2434"
                         class="input-dark"
-                        step="0.000001"
+                        step="any"
                         min="-90"
                         max="90">
                 </div>
@@ -133,7 +133,7 @@
                         value="{{ old('bts_lng') }}"
                         placeholder="125.0045"
                         class="input-dark"
-                        step="0.0001"
+                        step="any"
                         min="-180"
                         max="180">
                 </div>
@@ -147,7 +147,7 @@
                     <option value="">— Select Threat Group —</option>
                     @foreach([
                     'SRC','SRGU','SRMA','SROC','SRMA EMPORIUM','SRMA ARCTIC',
-                    'SRMA BROWSER','SRMA SESAME','SRMA LEVOX','COMTECH',
+                    'SRMA BROWSER','SRMA SESAME','IC LEVOX','COMTECH',
                     'EV MRGU','FUNCTIONAL','UNKNOWN'
                     ] as $group)
                     <option value="{{ $group }}" @selected(old('threat_group')===$group)>

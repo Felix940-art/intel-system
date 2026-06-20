@@ -265,13 +265,24 @@ class BtsController extends Controller
         $btsRecords = Bts::orderBy('name')->get();
 
 
-        // Intelligence Summary
+        /*
+    |--------------------------------------------------------------------------
+    | Executive Intelligence Summary
+    |--------------------------------------------------------------------------
+    */
+
         $totalBts = Bts::count();
 
+        // Network Distribution
         $smartBts = Bts::where('network', 'SMART')->count();
-
         $globeBts = Bts::where('network', 'GLOBE')->count();
+        $tmBts = Bts::where('network', 'TM')->count();
 
+
+        // Technology Evolution
+        $twoGTowers = Bts::where('network_mode', '2G')->count();
+        $threeGTowers = Bts::where('network_mode', '3G')->count();
+        $fourGLTETowers = Bts::where('network_mode', '4G LTE')->count();
         $fiveGTowers = Bts::where('network_mode', '5G')->count();
 
 
@@ -279,9 +290,16 @@ class BtsController extends Controller
             'sigint.bts.pdf',
             compact(
                 'btsRecords',
+
                 'totalBts',
+
                 'smartBts',
                 'globeBts',
+                'tmBts',
+
+                'twoGTowers',
+                'threeGTowers',
+                'fourGLTETowers',
                 'fiveGTowers'
             )
         )

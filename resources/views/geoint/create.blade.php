@@ -120,10 +120,11 @@
                         <option value="SRMA ARCTIC">SRMA ARCTIC</option>
                         <option value="SRMA BROWSER">SRMA BROWSER</option>
                         <option value="SRMA SESAME">SRMA SESAME</option>
-                        <option value="SRMA LEVOX">SRMA LEVOX</option>
+                        <option value="IC LEVOX">IC LEVOX</option>
                         <option value="COMTECH">COMTECH</option>
                         <option value="EV MRGU">EV MRGU</option>
                         <option value="FUNCTIONAL">FUNCTIONAL</option>
+                        <option value="NONE">NONE</option>
                     </select>
 
                     {{-- LIVE BADGE --}}

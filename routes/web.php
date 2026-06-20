@@ -16,6 +16,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use App\Http\Controllers\SreExportController;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\BtsController;
+use App\Http\Controllers\SigintCopController;
 
 /*
 |--------------------------------------------------------------------------
@@ -291,8 +292,10 @@ Route::middleware(['auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-require __DIR__ . '/auth.php';
+Route::get(
+    '/sigint/cop',
+    [SigintCopController::class, 'index']
+)->name('sigint.cop.index');
 
-Route::get('/test-time', function () {
-    return now()->format('F d, Y h:i:s A');
-});
+
+require __DIR__ . '/auth.php';

@@ -28,6 +28,7 @@ class Frequency extends Model
         'is_watchlisted',
         'threat_confronted',
         'user_id',
+        'signal_group',
     ];
 
     protected $appends = [

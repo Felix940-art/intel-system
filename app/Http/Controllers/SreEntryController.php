@@ -18,7 +18,7 @@ class SreEntryController extends Controller
         'SRMA ARCTIC',
         'SRMA BROWSER',
         'SRMA SESAME',
-        'SRMA LEVOX',
+        'IC LEVOX',
         'COMTECH',
         'EV MRGU',
         'FUNCTIONAL',
@@ -128,5 +128,14 @@ class SreEntryController extends Controller
         return redirect()
             ->route('sigint.sre.index')
             ->with('success', 'SRE record updated successfully.');
+    }
+
+    public function destroy(SreEvent $event)
+    {
+        $event->delete();
+
+        return redirect()
+            ->route('sigint.sre.index')
+            ->with('success', 'SRE record deleted successfully.');
     }
 }

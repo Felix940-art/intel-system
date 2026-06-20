@@ -328,7 +328,7 @@
                 'SRMA ARCTIC' => 'bg-teal-500/10 text-teal-300 border-teal-500/30',
                 'SRMA BROWSER' => 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30',
                 'SRMA SESAME' => 'bg-purple-500/10 text-purple-300border-purple-500/30',
-                'SRMA LEVOX' => 'bg-pink-500/10 text-pink-300 border-pink-500/30',
+                'IC LEVOX' => 'bg-pink-500/10 text-pink-300 border-pink-500/30',
                 'COMTECH' => 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30',
                 'EV MRGU' => 'bg-red-500/10 text-red-300 border-red-500/30',
                 'FUNCTIONAL' => 'bg-purple-500/10 text-purple-300 border-purple-500/30',

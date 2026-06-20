@@ -134,7 +134,7 @@
                     'SRMA ARCTIC',
                     'SRMA BROWSER',
                     'SRMA SESAME',
-                    'SRMA LEVOX',
+                    'IC LEVOX',
                     'COMTECH',
                     'EV MRGU',
                     'FUNCTIONAL',

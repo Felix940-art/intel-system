@@ -98,7 +98,7 @@
 
                     <select name="threat_confronted" id="threatSelect" class="form-input">
                         <option value="">Select Threat</option>
-                        @foreach(['SRC','SRGU','SRMA','SROC','SRMA EMPORIUM','SRMA ARCTIC','SRMA BROWSER','SRMA SESAME','SRMA LEVOX','COMTECH','EV MRGU','UNKNOWN'] as $threat)
+                        @foreach(['SRC','SRGU','SRMA','SROC','SRMA EMPORIUM','SRMA ARCTIC','SRMA BROWSER','SRMA SESAME','IC LEVOX','COMTECH','EV MRGU','UNKNOWN'] as $threat)
                         <option value="{{ $threat }}"
                             {{ $record->threat_confronted == $threat ? 'selected' : '' }}>
                             {{ $threat }}

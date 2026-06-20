@@ -175,7 +175,7 @@
 
                 <select name="threat_confronted" class="input-dark">
                     <option value="">— None —</option>
-                    @foreach(['SRC','SRGU','SRMA','SROC','SRMA EMPORIUM','SRMA ARCTIC','SRMA BROWSER','SRMA SESAME','SRMA LEVOX','COMTECH','EV MRGU','FUNCTIONAL'] as $t)
+                    @foreach(['SRC','SRGU','SRMA','SROC','SRMA EMPORIUM','SRMA ARCTIC','SRMA BROWSER','SRMA SESAME','IC LEVOX','COMTECH','EV MRGU','FUNCTIONAL'] as $t)
                     <option value="{{ $t }}"
                         {{ old('threat_confronted', $frequency->threat_confronted) === $t ? 'selected' : '' }}>
                         {{ $t }}
