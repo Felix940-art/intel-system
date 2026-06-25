@@ -111,15 +111,30 @@
 
     <div class="cop-header">
 
-        <h1>
-            🛰️ SIGINT COMMON OPERATING PICTURE
-        </h1>
+        <div class="cop-header mb-6">
 
-        <h2>
-            COMMAND CONTROL SYSTEM
-        </h2>
+            <div class="flex items-center justify-between">
 
-        <hr>
+                <div>
+                    <h1 class="text-3xl font-bold tracking-wide text-cyan-400">
+                        SIGINT COMMON OPERATING PICTURE
+                    </h1>
+
+                    <p class="mt-1 text-sm uppercase tracking-[0.25em] text-slate-400">
+                        COMMAND CONTROL SYSTEM
+                    </p>
+                </div>
+
+                <a href="{{ route('dashboard') }}"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg
+          border border-slate-700 bg-slate-900
+          hover:bg-slate-800 text-slate-200 transition">
+                    ← Return to SIGINT
+                </a>
+
+            </div>
+
+        </div>
 
     </div>
 
@@ -170,11 +185,20 @@ margin-bottom:20px;
 
         <!-- KPI CARDS -->
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+        <div style="display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+margin-bottom:20px;">
 
-            <div style="background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:20px;">
+            <!-- LEFT -->
+            <div style="background:#0f172a;
+    border:1px solid #1e293b;
+    border-radius:12px;
+    padding:20px;">
 
-                <h3 style="color:#22d3ee;font-size:22px;font-weight:bold;margin-bottom:15px;">
+                <h3 style="color:#22d3ee;
+        font-size:22px;
+        margin-bottom:15px;">
                     Tactical BTS Ranking
                 </h3>
 
@@ -182,53 +206,173 @@ margin-bottom:20px;
 
             </div>
 
-            <div style="background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:20px;">
+            <!-- RIGHT -->
+            <div style="background:#0f172a;
+    border:1px solid #1e293b;
+    border-radius:12px;
+    padding:20px;">
 
-                <h3 style="color:#f87171;font-size:22px;font-weight:bold;margin-bottom:15px;">
+                <h3 style="color:#f87171;
+        font-size:22px;
+        margin-bottom:15px;">
                     Intelligence Hotspots
                 </h3>
 
                 <div id="intelHotspots"></div>
 
-                <div id="intelTimeline"></div>
-
             </div>
 
         </div>
 
-        <div id="targetIntelPanel"
-            style="
-        display:none;
-        margin-bottom:20px;
+        <!-- TIMELINE -->
+
+        <div style="
+background:#0f172a;
+border:1px solid #1e293b;
+border-radius:12px;
+padding:20px;
+margin-bottom:20px;
+">
+
+            <h3 style="
+color:#22d3ee;
+font-size:22px;
+margin-bottom:15px;
+">
+                Latest Intelligence Activity
+            </h3>
+
+            <div
+                id="intelTimeline"
+                style="
+max-height:240px;
+overflow-y:auto;
+">
+            </div>
+
+        </div>
+
+        <div style="
+display:grid;
+grid-template-columns:3fr 1fr;
+gap:20px;
+margin-top:20px;
+">
+
+
+            <!-- MAP -->
+
+            <div>
+
+                <div id="map"></div>
+
+            </div>
+
+            <!-- RIGHT COMMAND PANEL -->
+
+            <div
+                style="
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+    ">
+
+                <!-- Target Intelligence -->
+
+                <div
+                    id="targetIntelPanel"
+                    style="
+               background:#09162e;
+        border:1px solid #1e3a5f;
+        border-radius:12px;
+        padding:18px;
+        ">
+
+                    <h3
+                        style="
+            color:#22d3ee;
+            margin-bottom:15px;
+            ">
+                        TARGET INTELLIGENCE
+                    </h3>
+
+                    <div
+                        id="targetIntelContentWrapper"
+                        style="
+background:#09162e;
+border:1px solid #1e3a5f;
+border-radius:12px;
+padding:18px;
+">
+
+                        <h3
+                            style="
+    color:#22d3ee;
+    margin-bottom:15px;
+    ">
+                            TARGET DETAILS
+                        </h3>
+
+                        <div id="targetIntelContent">
+
+                            <div
+                                style="
+        color:#94a3b8;
+        text-align:center;
+        padding:40px 10px;
+        ">
+
+                                Click a BTS marker to display intelligence.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Future Investigation Panel -->
+
+                <div
+                    id="investigationPanel"
+                    style="
         background:#09162e;
         border:1px solid #1e3a5f;
         border-radius:12px;
-        padding:20px;
-        color:white;
-     ">
+        padding:18px;
+        ">
 
-            <div style="
-        font-size:20px;
-        font-weight:bold;
-        color:#22d3ee;
-        margin-bottom:15px;">
-                TARGET INTELLIGENCE PANEL
+                    <h3
+                        style="
+            color:#fbbf24;
+            margin-bottom:10px;
+            ">
+                        INVESTIGATION
+                    </h3>
+
+                    <div
+                        style="
+            color:#94a3b8;
+            ">
+                        Select a BTS to begin investigation.
+                    </div>
+
+                </div>
+
             </div>
 
-            <div id="targetIntelContent"></div>
-
         </div>
-
-        <!-- MAP -->
-        <div id="map"></div>
 
     </div>
 
     <script>
         const btsMarkers = @json($btsMarkers);
+        console.log(btsMarkers);
         console.log('BTS:', btsMarkers);
 
         const frequencyLobs = @json($frequencyLobs);
+        const timelineEvents = @json($timelineEvents);
         console.log('LOBS:', frequencyLobs);
     </script>
 
@@ -592,14 +736,13 @@ gap:12px;
                 12
             );
 
-            const focusCircle = L.circle(
-                [site._lat, site._lng], {
-                    radius: 1000,
-                    color: '#ffff00',
-                    fillOpacity: 0.05,
-                    weight: 4
-                }
-            );
+            const focusCircle = L.circle([site._lat, site._lng], {
+                radius: 1000,
+                color: '#ffff00',
+                fillOpacity: 0.05,
+                weight: 4,
+                interactive: false
+            });
 
             highlightLayer.addLayer(focusCircle);
 
@@ -622,113 +765,62 @@ gap:12px;
                         );
 
                     highlightLayer.addLayer(link);
+                    showTargetIntel(site);
                 }
             }
         }
 
-        let timelineEvents = [];
-
         function buildOperationalTimeline() {
 
-            timelineEvents = [];
-
-            btsMarkers.forEach(site => {
-
-                site.targets.forEach(target => {
-
-                    timelineEvents.push({
-
-                        tower: site.name,
-
-                        threat: target.threat_group,
-
-                        target: target.code_name
-
-                    });
-
-                });
-
-            });
-
-            timelineEvents.sort((a, b) => {
-
-                const priority = {
-
-                    'SRMA ARCTIC': 3,
-                    'SRMA LEVOX': 2,
-                    'SRMA': 1
-
-                };
-
-                return (
-                    (priority[b.threat] || 0) -
-                    (priority[a.threat] || 0)
-                );
-
-            });
-
-            let timelineHtml = `
-
-    <div style="
-    margin-top:20px;
-    background:#0f172a;
-    border:1px solid #1e293b;
-    border-radius:12px;
-    padding:15px;
-    ">
-
-        <h3 style="
-        color:#22d3ee;
-        margin-bottom:15px;
-        ">
-            Operational Timeline
-        </h3>
-
-    `;
+            let html = '';
 
             timelineEvents.forEach(event => {
 
-                timelineHtml += `
+                let threatColor = '#22c55e';
 
-        <div style="
+                if (
+                    event.threat_group &&
+                    event.threat_group.includes('SRMA')
+                ) {
+                    threatColor = '#ef4444';
+                }
+
+                html += `
+    <div style="
         background:#1e293b;
         padding:10px;
         border-radius:8px;
         margin-bottom:10px;
-        border-left:4px solid #ef4444;
-        ">
+        border-left:4px solid ${threatColor};
+    ">
 
-            <div style="
+        <div style="
             color:white;
             font-weight:bold;
-            ">
-                ${event.target}
-            </div>
-
-            <div style="
-            color:#f87171;
-            ">
-                ${event.threat}
-            </div>
-
-            <div style="
-            color:#38bdf8;
-            font-size:13px;
-            ">
-                ${event.tower}
-            </div>
-
+        ">
+            ${event.code_name ?? 'UNKNOWN'}
         </div>
-        `;
 
+        <div style="
+            color:${threatColor};
+        ">
+            ${event.threat_group ?? 'N/A'}
+        </div>
+
+        <div style="
+            color:#94a3b8;
+            font-size:13px;
+        ">
+            ${event.observed_at}
+        </div>
+
+    </div>
+    `;
             });
-
-            timelineHtml += `</div>`;
 
             document.getElementById(
                 'intelTimeline'
-            ).innerHTML = timelineHtml;
-
+            ).innerHTML = html;
         }
 
         buildOperationalTimeline();
@@ -740,9 +832,7 @@ gap:12px;
                 );
 
             const content =
-                document.getElementById(
-                    'targetIntelContent'
-                );
+                document.getElementById('targetIntelContent');
 
             if (site.targets.length === 0) {
                 content.innerHTML =
@@ -752,12 +842,43 @@ gap:12px;
             </div>
         `;
 
-                panel.style.display = 'block';
-
                 return;
             }
 
-            let html = '';
+            let html = `
+
+<div style="margin-bottom:18px">
+
+    <div style="
+        font-size:20px;
+        font-weight:bold;
+        color:#22d3ee;
+    ">
+        ${site.name}
+    </div>
+
+    <div>Network: ${site.network}</div>
+
+    <div>Mode: ${site.mode}</div>
+
+    <div>LAC: ${site.lac}</div>
+
+    <div>CID: ${site.cid}</div>
+
+    <div>Neighbor CID: ${site.neighbor_cid ?? 'N/A'}</div>
+
+</div>
+
+<hr style="border-color:#334155">
+
+<h4 style="
+    margin:15px 0;
+    color:white;
+">
+Connected Targets
+</h4>
+
+`;
 
             site.targets.forEach(target => {
                 html += `
@@ -872,13 +993,12 @@ ${target.threat_group || 'N/A'}
             }
 
             L.circle([lat, lng], {
-
                 radius: radius,
                 color: iconColor,
                 fillColor: iconColor,
                 fillOpacity: 0.08,
-                weight: 1
-
+                weight: 1,
+                interactive: false
             }).addTo(coverageLayer);
 
             const marker = L.circleMarker(
@@ -891,60 +1011,50 @@ ${target.threat_group || 'N/A'}
                 }
             );
 
+            marker.bindPopup(`<div style="min-width:190px">
 
-            const targetList = site.targets.length ?
-                site.targets.map(t => `
-        <div style="margin-bottom:8px;">
-            <b>${t.code_name}</b><br>
-            Threat: ${t.threat_group}<br>
-            IMEI: ${t.imei ?? 'N/A'}<br>
-            IMSI: ${t.imsi ?? 'N/A'}
-        </div>
-    `).join('<hr>') :
-                'No connected targets';
-
-            marker.bindPopup(`
-    <div style="min-width:300px">
-
-        <h4 style="margin:0;">
-            ${site.name}
-        </h4>
-
-        <hr>
-
-        Network: ${site.network}<br>
-        Mode: ${site.mode}<br>
-
-        <br>
-
-        LAC: ${site.lac}<br>
-        CID: ${site.cid}<br>
-        Neighbor CID: ${site.neighbor_cid ?? 'N/A'}<br>
-
-        <br>
-
-        <b>Connected Targets: ${site.target_count}</b>
-
-        <hr>
-
-        ${targetList}
-
-<hr>
-
-<button
-onclick="investigateTargetByCid('${site.cid}')"
-style="
-padding:8px 12px;
-background:#2563eb;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
-">
-Investigate
-</button>
-
+                <div style="
+        font-size:18px;
+        font-weight:bold;
+        margin-bottom:10px;
+    ">
+        ${site.name}
     </div>
+
+    <div style="
+        color:${
+            site.threat_level === 'HIGH'
+                ? '#ef4444'
+                : site.threat_level === 'MEDIUM'
+                ? '#f59e0b'
+                : '#22c55e'
+        };
+        font-weight:bold;
+        margin-bottom:10px;
+    ">
+        ${site.threat_level} THREAT
+    </div>
+
+    <div style="margin-bottom:15px">
+        Connected Targets:
+        <b>${site.target_count}</b>
+    </div>
+
+    <button
+        onclick="investigateTargetByCid('${site.cid}')"
+        style="
+            width:100%;
+            padding:8px;
+            border:none;
+            border-radius:6px;
+            background:#2563eb;
+            color:white;
+            cursor:pointer;
+        ">
+        Investigate
+    </button>
+
+</div>
 `);
 
             marker.on('click', function() {
@@ -952,13 +1062,6 @@ Investigate
                 showIntelTargets(site);
 
                 showTargetIntel(site);
-
-                document
-                    .getElementById('targetIntelPanel')
-                    .scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
 
             });
 

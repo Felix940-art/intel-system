@@ -152,33 +152,54 @@
 
                         <span class="icon">💻</span>
                         <span class="label flex-1 text-left">SIGINT</span>
-                        <span class="label" :class="open ? 'rotate-90' : ''">▶</span>
+                        <span
+                            class="label transition-transform duration-300"
+                            :class="open ? 'rotate-90 text-cyan-400' : ''">
+                            ▶
+                        </span>
                     </button>
 
                     <div
                         x-show="open"
-                        x-transition
-                        class="mt-1 space-y-2 text-slate-400 sidebar-sub"
+                        x-transition:enter="transition ease-out duration-250"
+                        x-transition:enter-start="opacity-0 -translate-y-2"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 -translate-y-2"
+                        class="mt-2 ml-6 space-y-1 sidebar-sub"
                         style="display: none;">
 
+                        <a href="{{ route('sigint.cop') }}"
+                            class="sidebar-item text-sm pl-6
+{{ request()->routeIs('sigint.cop') ? 'bg-blue-600/20 border-l-4 border-cyan-400 text-cyan-300' : '' }}"
+                            data-label="Common Operating Picture">
+                            <span class="icon">🛰️</span>
+                            <span class="label">Common Operating Picture</span>
+                        </a>
+
                         <a href="{{ route('sigint.frequency.index') }}"
-                            class="sidebar-item text-sm pl-6"
+                            class="sidebar-item text-sm pl-6
+{{ request()->routeIs('sigint.frequency.*') ? 'bg-blue-600/20 border-l-4 border-cyan-400 text-cyan-300' : '' }}"
                             data-label="Radio Frequency">
                             <span class="icon">📡</span>
                             <span class="label">Radio Frequency</span>
                         </a>
 
                         <a href="{{ route('sigint.sre.index') }}"
-                            class="sidebar-item text-sm pl-6"
+                            class="sidebar-item text-sm pl-6
+{{ request()->routeIs('sigint.sre.*') ? 'bg-blue-600/20 border-l-4 border-cyan-400 text-cyan-300' : '' }}"
                             data-label="SRE System">
-                            <span class="icon">🧭</span>
+                            <span class="icon">📱</span>
                             <span class="label">SRE System</span>
                         </a>
 
                         <a href="{{ route('sigint.bts.index') }}"
-                            class="sidebar-item text-sm pl-6"
+                            class="sidebar-item text-sm pl-6
+{{ request()->routeIs('sigint.bts.*') ? 'bg-blue-600/20 border-l-4 border-cyan-400 text-cyan-300' : '' }}"
                             data-label="BTS Database">
-                            <span class="icon">📡</span>
+                            <span class="icon">🗼</span>
                             <span class="label">BTS Database</span>
                         </a>
                     </div>

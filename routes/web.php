@@ -96,6 +96,20 @@ Route::middleware(['auth'])->group(function () {
     })->name('sigint');
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | SIGINT - COMMON OPERATING PICTURE
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware([
+        'role:Admin,Operator',
+        'module:sigint'
+    ])->group(function () {
+
+        Route::get('/sigint/cop', [SigintCopController::class, 'index'])
+            ->name('sigint.cop');
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -291,11 +305,5 @@ Route::middleware(['auth'])->group(function () {
 | AUTH ROUTES
 |--------------------------------------------------------------------------
 */
-
-Route::get(
-    '/sigint/cop',
-    [SigintCopController::class, 'index']
-)->name('sigint.cop.index');
-
 
 require __DIR__ . '/auth.php';

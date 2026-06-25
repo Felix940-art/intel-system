@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Frequency;
 use App\Models\Bts;
-use Illuminate\Http\Request;
 use App\Models\SreEvent;
+use App\Models\GeoInt;
+use App\Models\ForensicReport;
+use Illuminate\Http\Request;
+
 
 class SigintCopController extends Controller
 {
@@ -17,6 +20,89 @@ class SigintCopController extends Controller
             $targets = SreEvent::where('lac', $site->lac)
                 ->where('cid', $site->cid)
                 ->get();
+
+            /*
+            |--------------------------------------------------------------------------
+            | RADIO FREQUENCY FUSION
+            |--------------------------------------------------------------------------
+            */
+
+            $frequencyHits = Frequency::where(
+                'municipality',
+                $site->municipality
+            )->get();
+
+            /*
+            |--------------------------------------------------------------------------
+            | GEOINT FUSION
+            |--------------------------------------------------------------------------
+            */
+
+            $geoHits = GeoInt::where(
+                'threat_confronted',
+                'LIKE',
+                '%' . $site->municipality . '%'
+            )->get();
+
+            /*
+            |--------------------------------------------------------------------------
+            | DIGITAL FORENSICS
+            |--------------------------------------------------------------------------
+            */
+
+            $forensicHits = ForensicReport::where(
+                'location',
+                'LIKE',
+                '%' . $site->municipality . '%'
+            )->get();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | INTELLIGENCE FUSION SCORE
+            |--------------------------------------------------------------------------
+            */
+
+            $fusionScore = 0;
+
+            /* SRE */
+
+            $fusionScore += $targets->count() * 20;
+
+            /* Watchlisted Frequencies */
+
+            $fusionScore += $frequencyHits
+                ->where('is_watchlisted', true)
+                ->count() * 10;
+
+            /* GEOINT */
+
+            $fusionScore += $geoHits->count() * 15;
+
+            /* DIGITAL FORENSICS */
+
+            $fusionScore += $forensicHits->count() * 10;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | FUSION THREAT LEVEL
+            |--------------------------------------------------------------------------
+            */
+
+            if ($fusionScore >= 120) {
+
+                $fusionThreat = 'CRITICAL';
+            } elseif ($fusionScore >= 80) {
+
+                $fusionThreat = 'HIGH';
+            } elseif ($fusionScore >= 40) {
+
+                $fusionThreat = 'MEDIUM';
+            } else {
+
+                $fusionThreat = 'LOW';
+            }
 
             return [
 
@@ -52,6 +138,11 @@ class SigintCopController extends Controller
                     ];
                 })->values(),
 
+                'frequencies' => $frequencyHits->values(),
+                'geoint' => $geoHits->values(),
+                'forensics' => $forensicHits->values(),
+                'fusion_score' => $fusionScore,
+                'fusion_threat' => $fusionThreat,
 
             ];
         });
